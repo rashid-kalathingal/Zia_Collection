@@ -1,0 +1,114 @@
+<%- include('../admin/partials/head.ejs') -%>
+
+
+<%- include('../admin/partials/header.ejs') -%>
+<div class="d-flex" style="display: flex;">
+<div class="hea"><%- include('../admin/partials/nav.ejs') -%></div>
+<div class="heavhgnvbn" style="width: 100%;"><br><br><br><br>
+
+
+
+    <style>
+        .modal-footer {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+        .modal-footer p {
+          font-size: 1.2rem;
+          margin-bottom: 1rem;
+        }
+        .btn-danger {
+          background-color: #dc3545;
+          border-color: #dc3545;
+        }
+        .btn-danger:hover {
+          background-color: #c82333;
+          border-color: #bd2130;
+        }
+      </style>
+      
+    
+    
+    <section>
+       
+    
+            <table class="table table-striped table-dark mt-5" id="tableid">
+                <thead>
+                    <tr>
+                        <th scope="col">No</th>
+    
+                        <th scope="col">Name</th>
+    
+                        <th scope="col">Email</th>
+    
+                        <th scope="col">Phone</th>
+    
+                        <th scope="col">Options</th>
+                    </tr>
+                </thead>
+                <body>
+                    <% userList.forEach((item, index) => { %>
+                      <tr>
+                        <td>
+                          <%= index + 1 %>
+                        </td>
+                        <td>
+                          <%= item.name %>
+                        </td>
+                        <td>
+                          <%= item.email %>
+                        </td>
+                        <td>
+                          <%= item.mobile %>
+                        </td>
+
+                        <td>
+                            <% if(item.isActive){ %>
+                          <button class="btn btn-danger block-button" data-id="<%= item._id %>">
+                            Block
+                          </button>
+
+                          <% } else {%>
+                          <button class="btn btn-primary block-button" data-id="<%= item._id %>">
+                            UnBlock
+                          </button>
+                          
+                       <%   }%>
+                        </td>
+                      </tr>
+                    <% }); %>
+                  
+                    <script>
+                      const blockButtons = document.querySelectorAll('.block-button');
+                      blockButtons.forEach(blockButton => {
+                        const itemId = blockButton.dataset.id;
+                        blockButton.addEventListener('click', () => {
+                          const url = blockButton.classList.contains('btn-danger')
+                            ? `/admin/block/${itemId}`
+                            : `/admin/unBlock/${itemId}`;
+                          blockButton.textContent = blockButton.classList.contains('btn-danger')
+                            ? 'Unblock'
+                            : 'Block';
+                          blockButton.classList.toggle('btn-danger');
+                          blockButton.classList.toggle('btn-primary');
+                          fetch(url).catch(console.error);
+                        });
+                      });
+                    </script>
+                  </body>
+
+                  
+            </table>
+        </div>
+    </section>
+    
+    <script>
+        $(document).ready(function () {
+            $("#tableid").DataTable();
+        });
+    </script>
+
+</div>
+</div>
+<%- include('../admin/partials/script.ejs') -%>

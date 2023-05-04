@@ -1,0 +1,91 @@
+<%- include('../admin/partials/head.ejs') -%>
+
+
+<%- include('../admin/partials/header.ejs') -%>
+<div class="d-flex" style="display: flex;">
+<div class="hea"><%- include('../admin/partials/nav.ejs') -%></div>
+<div class="heavhgnvbn" style="width: 100%;"><br><br><br><br>
+
+
+
+
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.1/css/bootstrap.min.css" integrity="sha512-VyvYODdTX5thOk83L98f3Cg4e85t2DwHEbJGyyWzS8KvRfuLdp57nX9pLW7D8RmZuV7w+MxZu3qLrTqzwu0Qng==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<!-- Custom CSS -->
+<style>
+  form {
+    max-width: 500px;
+    margin: auto;
+  }
+
+  label {
+    font-weight: bold;
+  }
+
+  select,
+  input[type="text"],
+  textarea,
+  input[type="number"],
+  input[type="file"] {
+    margin-bottom: 1rem;
+    border-radius: 0.25rem;
+    padding: 0.5rem;
+    border: 1px solid #ced4da;
+  }
+
+  button[type="submit"] {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+  }
+  
+
+  button[type="submit"]:hover {
+    background-color: #0069d9;
+    border-color: #0062cc;
+    color: #fff;
+  }
+</style>
+
+<h4><b> Edit Category </b></h4>
+<form action="/admin/editCategory/<%=editCategory._id %>" id="editCategoryForm" method="POST" >
+  <div class="mb-3">
+    <label for="category" class="form-label">Category Name:</label>
+    <input type="text" class="form-control" id="category" name="category" value="<%=editCategory.category %>" required>
+  </div>
+
+  <div class="mb-3">
+    <label for="gender" class="form-label">Gender:</label>
+    <select class="form-select" id="gender" name="gender" required>
+      <option value="">-Select Gender-</option>
+      <option value="Men">Men</option>
+      <option value="Women">Women</option>
+    </select>
+  </div>
+
+  <div class="mb-3">
+    <label for="description" class="form-label">Description:</label>
+    <textarea class="form-control" id="description" name="description" rows="5" required></textarea>
+  </div>
+
+
+  <button type="submit" class="btn btn-primary">Add Product</button>
+
+<!-- Bootstrap JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1">
+
+function viewImage(event) {
+        document.getElementById('imgView').src = URL.createObjectURL(event.target.files[0])
+  }
+
+
+</script>
+
+
+</div>
+</div>
+<%- include('../admin/partials/script.ejs') -%>

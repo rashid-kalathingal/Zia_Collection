@@ -1,0 +1,94 @@
+<%- include('../admin/partials/head.ejs') -%>
+
+
+<%- include('../admin/partials/header.ejs') -%>
+<div class="d-flex" style="display: flex;">
+<div class="hea"><%- include('../admin/partials/nav.ejs') -%></div>
+<div class="heavhgnvbn" style="width: 100%;"><br><br><br><br>
+
+
+
+<div class="container">
+  <style>
+    .add-product-button {
+      background-color: green;
+      color: rgb(248, 242, 242);
+      font-weight: bold;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      float: right; /* add this line */
+    }
+    table {
+    margin-top: 8rem;
+  }
+ 
+  </style>
+ <a href="/admin/addProduct">
+    <button type="button" class="btn btn-outline-secondary add-product-button">
+      Add Product
+    </button>
+  </a>
+  
+  <style>
+    .add-product-button {
+      border-color: #214229;
+      color: #0e3617;
+      transition: all 0.2s ease-in-out;
+    }
+  
+    .add-product-button:hover {
+      background-color: #546257;
+      color: #fff;
+    }
+  </style>
+  
+</div class="mt-5">
+
+<table class="table table-striped table-dark mt-5">
+
+  <thead>
+    <tr style="border-width: 5px; background-color: rgb(245, 237, 237);" >
+      <th scope="col">No</th>
+      <th scope="col">Name</th>
+      <th scope="col">gender</th>
+      <th scope="col">Description</th>
+      <th scope="col">Price</th>
+      <th>Image</th>
+      <th>Option</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% products.forEach((item ,index)=> { %>
+    <tr>
+      <th scope="row"><%= index+1 %></th>
+      <td><%= item.name %></td>
+      <td><%= item.gender %></td>
+      <td><%= item.description %></td>
+      <td><%= item.price %></td>
+      <td>
+        <img
+          style="width: 50px; height: 50px"
+          src="/uploads/<%= item.images[0] %>"
+          alt=""
+        />
+      </td>
+      <td>
+        <div style="display: flex;">
+          <a href="/admin/editProduct/<%=item._id%>" class="btn btn-primary btn-sm me-3">Edit</a>
+
+        
+        </div>
+       
+      
+      </td>
+    </tr>
+    <% }) %>
+  </tbody>
+</table>
+
+</div>
+</div>
+<%- include('../admin/partials/script.ejs') -%>
