@@ -48,11 +48,11 @@
 					
 					<!-- Logo desktop -->		
 					<a href="#" class="logo">
-						<img src="/images/icons/logo-02.png" alt="IMG-LOGO"
+						<img src="/images/icons/logo-02.png" alt="IMG-LOGO">
 					</a>
 
 					<!-- Menu desktop -->
-					<div class="menu-desktop">
+					<div class="menu-desktop" style="margin-left: 120px;">
 						<ul class="main-menu">
 							<li>
 								<a href="/">Home</a>
@@ -204,35 +204,13 @@
 					</li>
 				
 					<li class="p-b-13">
-						<a href="/login" class="stext-102 cl2 hov-cl1 trans-04">
+						<a href="/account" class="stext-102 cl2 hov-cl1 trans-04">
 							My Account
 						</a>
 					</li>
 
-
-
-
-
-
-		
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 					<li class="p-b-13">
-						<a href="#" class="stext-102 cl2 hov-cl1 trans-04">
+						<a href="/Orders" class="stext-102 cl2 hov-cl1 trans-04">
 							Track Oder
 						</a>
 					</li>
@@ -243,13 +221,20 @@
 						</a>
 					</li>
 
-					<% if(loggedin===true){%>
+					<% if(loggedin === true) { %>
 						<li class="p-b-13">
-						<a href="/logout" class="stext-102 cl2 hov-cl1 trans-04">
+						  <a href="/logout" class="stext-102 cl2 hov-cl1 trans-04">
 							Log Out
-						</a>
-					</li>
-					<% } %>
+						  </a>
+						</li>
+					  <% } else { %>
+						<li class="p-b-13">
+						  <a href="/login" class="stext-102 cl2 hov-cl1 trans-04">
+							Log In
+						  </a>
+						</li>
+					  <% } %>
+					  
 					
 				</ul>
 

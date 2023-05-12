@@ -85,12 +85,23 @@ exports.about= function(req, res, next) {
   res.render('user/about',{loggedin,cartCount})
 };
 
-exports.product=function(req, res, next) {
+exports.product= async function(req, res, next) {
+  try{
+    const products = await Product.find();
+          loggedin=req.session.userloggedIn
+
+   const cartCount = req.cartCount;
+ 
+ 
+  res.render('user/product',{loggedin,cartCount,products})
+}catch(error){
+  console.log(error);}}
+
+exports.profile=function(req, res, next) {
   const cartCount = req.cartCount;
   loggedin=req.session.userloggedIn
-  res.render('user/product',{loggedin,cartCount})
+  res.render('user/profile',{loggedin,cartCount})
 };
-
 
 
 
@@ -108,9 +119,10 @@ exports.oneproduct = async (req,res)=>{
 
     // Access cartCount value from req object
   //const cartCount = req.cartCount;
+  const products = await Product.find();
   loggedin=req.session.userloggedIn
   const cartCount = req.cartCount;
-    res.render('user/oneproduct',{singleProduct,loggedin,cartCount})//passing the singleProduct values while rendering the page...
+    res.render('user/oneproduct',{singleProduct,loggedin,cartCount,products})//passing the singleProduct values while rendering the page...
   } catch (error) {
     console.log(error)
   }
@@ -126,7 +138,7 @@ exports.blog= function(req, res, next) {
 
 exports.shopping_cart= function(req, res, next) {
   loggedin=req.session.userloggedIn
-  // console.log("🔥🔥🔥🔥🔥");
+  
   const cartCount = req.cartCount;
    res.render('user/cart',{loggedin,cartCount})
 };

@@ -35,7 +35,8 @@ router.get('/dashboard',verify,adminController.dashboard)
 router.get('/banner',verify,adminController.banner)
 router.get('/category',verify,CategoryController.category)
 router.get('/coupons',verify,adminController.coupons) 
-router.get('/order',verify,adminController.order)  
+
+// router.get('/Order',adminController.Orders) 
 router.get('/product',verify,productController.AllProducts)
 
 //user controller in admin side
@@ -59,8 +60,9 @@ router.get('/addCategory',CategoryController.addCategoryPage)
   router.get('/editCategory/:id',CategoryController.getEditCategoryPage)
   router.post('/editCategory/:id',CategoryController.editCategory)
   
-
-
+//order controller in admin side
+router.get('/order',verify,adminController.Orders) 
+router.post('/order-details/',adminController.orderDetailsAdmin);
 
 router.get('/logout',adminController.logout) 
  router.post('/login',adminController.postLogin)
