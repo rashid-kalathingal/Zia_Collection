@@ -1,5 +1,5 @@
 <style>
-    .card-hover-shadow:hover {
+    /* .card-hover-shadow:hover {
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
       transform: translateY(-5px);
       transition: all 0.3s ease-in-out;
@@ -15,7 +15,7 @@
       top: 2px;
       width: 20px;
       height: 20px;
-    }
+    } */
   
     .custom-control-input:checked~.custom-control-label::before {
       border-color: #007bff;
@@ -107,7 +107,7 @@
       </div>
     </div>
   
-<!--   
+  
     <div class="container">
       <div class="row justify-content-center mt-3">
         <div class="col-lg-6">
@@ -128,8 +128,8 @@
                           <input type="text" class="form-control" id="couponId" placeholder="Enter your coupon code">
                           <button class="btn btn-primary rounded-0" type="button" id="apply-coupon-btn"
                             onclick="applyCoupon()">Apply</button>
-                          <!-- <button class="btn btn-secondary rounded-0" type="button" id="remove-coupon-btn"
-                            onclick="removeCoupon()">Remove</button> -->
+                          <button class="btn btn-secondary rounded-0" type="button" id="remove-coupon-btn"
+                            onclick="removeCoupon()">Remove</button>
                         </div>
                         <div class="message-container">
                           <p class="text-danger mb-0"><span id="message"></span></p>
@@ -145,7 +145,7 @@
         </div>
       </div>
     </div>
-   -->
+  
   
   
   
@@ -228,14 +228,14 @@
                         <span>Tax</span>
                         <span>₹<%= total[0].totalTax %></span>
                       </p>
-                      <!-- <p class="d-flex">
+                      <p class="d-flex">
                         <span>Discount Coupon</span>
                         <% if (locals.discountAmount) { %>
                           <span id="couponDiscount">₹ <%= locals.discountAmount %></span>
                         <% } else { %>
                           <span id="couponDiscount"></span>
                         <% } %>
-                      </p> -->
+                      </p>
                       
   
                       <hr>
@@ -283,7 +283,7 @@
                         </div>
                       </div>
                     </div> -->
-  
+ 
                       <div class="form-group">
                         <div class="col-md-12">
                           <div class="radio">
@@ -292,8 +292,8 @@
                         </div>
                       </div>
                       <div class="form-group">
-                        <div class="col-md-12" style="width: 400px;">
-                          <div class="checkbox">
+                        <div class="col-md-12" >
+                          <div class="checkbox" style="width:338px";>
                             <label><input type="checkbox" id="terms-checkbox" value="" class="mr-2"> I have read and
                               accept
                               the terms and conditions</label>
@@ -327,21 +327,21 @@
     <script>
   
   
-    //   const couponInput = document.querySelector('#coupon-code');
-    //   const applyCouponBtn = document.querySelector('#apply-coupon-btn');
-    //   const couponMessage = document.querySelector('#coupon-message');
+      const couponInput = document.querySelector('#coupon-code');
+      const applyCouponBtn = document.querySelector('#apply-coupon-btn');
+      const couponMessage = document.querySelector('#coupon-message');
   
-    //   applyCouponBtn.addEventListener('click', () => {
-    //     const couponCode = couponInput.value.trim();
-    //     if (couponCode) {
-    //       // Send coupon code to server and update the UI accordingly
-    //       // ...
-    //       // If coupon is valid and applied successfully, show success message and update UI
-    //       couponMessage.innerHTML = `<div class="alert alert-success" role="alert">Coupon "${couponCode}" applied successfully!</div>`;
-    //     } else {
-    //       couponMessage.innerHTML = `<div class="alert alert-danger" role="alert">Please enter a valid coupon code!</div>`;
-    //     }
-    //   });
+      applyCouponBtn.addEventListener('click', () => {
+        const couponCode = couponInput.value.trim();
+        if (couponCode) {
+          // Send coupon code to server and update the UI accordingly
+          // ...
+          // If coupon is valid and applied successfully, show success message and update UI
+          couponMessage.innerHTML = `<div class="alert alert-success" role="alert">Coupon "${couponCode}" applied successfully!</div>`;
+        } else {
+          couponMessage.innerHTML = `<div class="alert alert-danger" role="alert">Please enter a valid coupon code!</div>`;
+        }
+      });
   
   
   
@@ -385,10 +385,10 @@
           method: 'post',
           data: $('#checkout-form').serialize(),
           success: (response) => {
-            alert(response);
-            console.log("alsdfljalsdfsadfkljsadfjlk")
+         //   alert(response);
+           // console.log("alsdfljalsdfsadfkljsadfjlk")
             if (response.codSuccess) {
-              console.log('Redirecting to /orderPlaced');
+            //  console.log('Redirecting to /orderPlaced');
               location.href = "/orderPlaced";
   
             } else if (response.payment) {
@@ -408,7 +408,7 @@
 
 
       function razorpayPayment(order) {
-  console.log("ghghghghghghghasdfghjkhgfdsdfy");
+//  console.log("ghghghghghghghasdfghjkhgfdsdfy");
         var options = {
   
           "key": "rzp_test_5rsUJArIQhlXkX", // Enter the Key ID generated from the Dashboard
@@ -419,9 +419,7 @@
           "image": "/images/Step.png",
           "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
           "handler": function (response) {
-             alert(response.razorpay_payment_id);
-             alert(response.razorpay_order_id);
-             alert(response.razorpay_signature)
+          
             verifyPayment(response, order)
           },
           "prefill": {
@@ -438,13 +436,6 @@
         };
         var rzp1 = new Razorpay(options);
         rzp1.on('payment.failed', function (response) {
-        //    alert(response.error.code);
-        //    alert(response.error.description);
-        //    alert(response.error.source);
-        //    alert(response.error.step);
-        //    alert(response.error.reason);
-        //    alert(response.error.metadata.order_id);
-        //    alert(response.error.metadata.payment_id);
         console.log(response,order)
           verifyPayment(response, order)
         });
@@ -466,7 +457,7 @@
           
           success: (response) => {
             if (response.status) {
-              alert('payment success')
+             // alert('payment success')
               // hideLoader()
               location.href = '/orderPlaced'
             } else {
@@ -483,77 +474,77 @@
   
   
   
-    //   function applyCoupon() {
+      function applyCoupon() {
   
-    //     let couponInput = document.getElementById('couponId');
-    //     let message = document.getElementById('message');
+        let couponInput = document.getElementById('couponId');
+        let message = document.getElementById('message');
   
-    //     couponInput.addEventListener('input', function () {
-    //       if (couponInput.value.trim().length > 0) {
-    //         message.innerHTML = '';
-    //       }
-    //     });
-  
-  
-    //     let couponId = document.getElementById('couponId').value;
-    //     let total = document.getElementById('taxWithTotal').innerHTML;
-  
-    //     console.log(total, '....')
-    //     console.log(couponId, 'iddddddd')
+        couponInput.addEventListener('input', function () {
+          if (couponInput.value.trim().length > 0) {
+            message.innerHTML = '';
+          }
+        });
   
   
-    //     if (couponId.trim().length === 0) {
-    //       document.getElementById("message").innerHTML = "Enter coupon code";
+        let couponId = document.getElementById('couponId').value;
+        let total = document.getElementById('taxWithTotal').innerHTML;
   
-    //     } else {
+        console.log(total, '....')
+        console.log(couponId, 'iddddddd')
   
-    //       $.ajax({
-    //         url: '/apply-coupon',
-    //         data: {
-    //           couponId: couponId,
-    //           total: total
   
-    //         },
-    //         method: 'post',
-    //         success: (response) => {
+        if (couponId.trim().length === 0) {
+          document.getElementById("message").innerHTML = "Enter coupon code";
   
-    //           console.log(response)
-    //           if (response.success == false) {
-    //             document.getElementById("message").innerHTML = response.message;
-    //             alertify.set('notifier', 'delay', 5);
-    //             alertify.set('notifier', 'position', 'top-right');
-    //             alertify.error('Invalid coupon code');
+        } else {
   
-    //             location.reload();
+          $.ajax({
+            url: '/apply-coupon',
+            data: {
+              couponId: couponId,
+              total: total
+  
+            },
+            method: 'post',
+            success: (response) => {
+  
+              console.log(response)
+              if (response.success == false) {
+                document.getElementById("message").innerHTML = response.message;
+                alertify.set('notifier', 'delay', 5);
+                alertify.set('notifier', 'position', 'top-right');
+                alertify.error('Invalid coupon code');
+  
+                location.reload();
                 
   
-    //             //  document.getElementById("taxWithTotal").innerHTML = total;
+                //  document.getElementById("taxWithTotal").innerHTML = total;
   
-    //           } else if (response.success == true) {
-    //             console.log(response.discountAmount);
-    //             console.log(response.cartTotal, '/////////');
-    //             console.log(response.cartTotal-response.discountAmount,'????????')
+              } else if (response.success == true) {
+                console.log(response.discountAmount);
+                console.log(response.cartTotal, '/////////');
+                console.log(response.cartTotal-response.discountAmount,'????????')
   
-    //             // Update the content of the #couponDiscount element with the discounted amount
-    //             if (response.discountAmount) {
-    //               document.getElementById("couponDiscount").innerHTML = `₹${response.discountAmount}`;
-    //               document.getElementById("taxWithTotal").innerHTML = `₹${response.cartTotal - response.discountAmount}`;
-    //             } else {
-    //               document.getElementById("couponDiscount").innerHTML = "";
-    //             }
+                // Update the content of the #couponDiscount element with the discounted amount
+                if (response.discountAmount) {
+                  document.getElementById("couponDiscount").innerHTML = `₹${response.discountAmount}`;
+                  document.getElementById("taxWithTotal").innerHTML = `₹${response.cartTotal - response.discountAmount}`;
+                } else {
+                  document.getElementById("couponDiscount").innerHTML = "";
+                }
   
-    //             alertify.set('notifier', 'delay', 2);
-    //             alertify.set('notifier', 'position', 'top-right');
-    //             alertify.success('Coupon applied');
-    //           }
+                alertify.set('notifier', 'delay', 2);
+                alertify.set('notifier', 'position', 'top-right');
+                alertify.success('Coupon applied');
+              }
   
-    //         }
-    //       });
+            }
+          });
   
-    //     }
+        }
   
   
-    //   }
+      }
   
   
     </script>

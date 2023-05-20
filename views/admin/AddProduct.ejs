@@ -74,7 +74,7 @@
       <select class="form-control" id="categoryDescription" name="category" required>
         <option value="" selected disabled>Select category</option>
         <% category.forEach(element => { %>
-          <% if (element.isListed) { %>
+          <% if (element.isListed  ) { %>
             <option value="<%= element._id %>"><%= element.category %></option>  <!-- code to be executed if the condition is true -->
           <% } %>
         <% }) %>
@@ -115,9 +115,9 @@
   </div>
 </form>
 
+
 <!-- Bootstrap JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1>
-
 
 
 

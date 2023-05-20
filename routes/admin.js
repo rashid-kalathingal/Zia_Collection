@@ -4,8 +4,8 @@ const adminController = require('../controllers/adminController')
 const productController = require('../controllers/productController')
 const CategoryController = require('../controllers/CategoryController')
 const Product = require('../models/productSchema')
-
-
+const couponControllers = require('../controllers/couponControllers')
+const bannerController = require('../controllers/bannerController')
 
   //middleware for preventing loading for strangers
   function adminauth(req,res, next){
@@ -34,7 +34,7 @@ router.get('/',adminauth, function(req, res, next) {
 router.get('/dashboard',verify,adminController.dashboard)
 router.get('/banner',verify,adminController.banner)
 router.get('/category',verify,CategoryController.category)
-router.get('/coupons',verify,adminController.coupons) 
+
 
 // router.get('/Order',adminController.Orders) 
 router.get('/product',verify,productController.AllProducts)
@@ -50,6 +50,9 @@ router.get('/unBlock/:id',adminController.unBlockUser)
  router.post('/addProduct',productController.postProduct)
 router.get('/editProduct/:id',productController.getEditProductPage)
 router.post('/editProduct/:id',productController.editProduct)
+//router.delete('/deleteProduct/:id', productController.deleteProduct);
+   router.get('/softdeleteproduct/:id',adminController.softdeleteproduct)
+   router.get('/undoproduct/:id',adminController.undoproduct)
 
 
 //category controller in admin side
@@ -66,6 +69,29 @@ router.post('/order-details/',adminController.orderDetailsAdmin);
 
 router.get('/logout',adminController.logout) 
  router.post('/login',adminController.postLogin)
+
+//coupons
+router.get('/coupon',verify,couponControllers.couponPage);
+router.post('/coupon',couponControllers.postCoupon);
+router.patch('/coupon-disable/:id',couponControllers.disableCoupon);
+router.patch('/coupon-enable/:id',couponControllers.enableCoupon);
+router.get('/edit-coupon',couponControllers.editCoupon);
+router.post('/update-coupon',couponControllers.updateCoupon);
+
+
+//banner controller
+router.get('/banner',bannerController.getBanner)
+router.post('/banner',bannerController.addBanner)
+
+
+ //router.get('/sales-report',verify,adminController.sales)
+ //router.get('/sales-report',verify,adminController.salesSummary)
+//  router.post('/sales-report',adminController.salesReport)
+// router.get('/sales-report/pdf',adminController.generateSalesReportPDF);
+
+router.get('/sales-report',adminController.salesSummary)
+router.post('/sales-report',adminController.salesReport)
+
 
 
 module.exports = router;

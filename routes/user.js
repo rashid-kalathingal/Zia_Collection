@@ -5,9 +5,10 @@ const orderController = require('../controllers/orderController')
 const cartController = require('../controllers/cartController')
 const addressController = require('../controllers/addressController')
 const Product = require('../controllers/productController')
+const wishlistController = require('../controllers/wishlistController')
 const mongoose= require('mongoose')
 const User = require("../models/userSchema");
-
+const couponControllers = require('../controllers/couponControllers')
 //middleware for preventing loading for strangers
 function userauth(req,res, next){
   if(req.session && req.session.user && req.session.userloggedIn){
@@ -29,6 +30,7 @@ function verify(req,res, next){
 router.get('/home',verify,cartController.cartCount,userController.home) 
 router.get('/',userauth,cartController.cartCount,userController.home)
 router.get('/login',userauth, userController.login)
+router.get("/otpLogin", userauth, userController.getSignOtpIn);
 router.get('/about',cartController.cartCount,userController.about)
 router.get('/product',cartController.cartCount, userController.product)
 router.get('/account',verify, userController.profile)
@@ -45,6 +47,12 @@ router.get('/Women',cartController.cartCount,userController.Women)
  router.post("/sendotp", userController.sendOtp);
  router.post("/verifyotp", userController.verifyOtp);
  router.post("/emailexists", userController.emailVerify);
+ router.post(
+  "/verifyotpLogin",
+  userauth,
+  userController.verifyMobileOtp,
+);
+router.post("/mobileexists", userController.mobileVerify);
  //router.get('/singleProduct/:id',userController.userSingleProduct)
 
 //cart
@@ -61,10 +69,9 @@ router.post('/address',addressController.deliveryAddressPost) // url for check o
 //user saved address
 router.get('/savedAddress',cartController.cartCount,addressController.savedAddressget)
 router.post('/savedAddress',addressController.savedAddressPost)
-
-// router.get('/editSavedAddress/:id',cartController.cartCount,addressController.editSavedAddress)
-// router.post('/editSavedAddress/:id',addressController.editSavedAddressPost)
-// router.delete('/deleteAddress/:id', addressController.deleteAddress);
+router.get('/editSavedAddress/:id',cartController.cartCount,addressController.editSavedAddress)
+router.post('/editSavedAddress/:id',addressController.editSavedAddressPost)
+router.delete('/deleteAddress/:id', addressController.deleteAddress);
 
 
 //order
@@ -72,9 +79,18 @@ router.get('/orderPlaced',orderController.orderPlacedCod)
 router.get('/Orders',cartController.cartCount,orderController.orders)
 router.get('/viewOrderProducts/:id',cartController.cartCount,orderController.viewOrderProducts)
 router.get('/cancel-order/',orderController.cancelOrder);
+router.get('/return-order/',orderController.returnOrder);
 
 //razor pay
 router.post('/verify-payment',orderController.paymentVerify);
 router.get('/payment-failed',orderController.paymentFailed);
+//whishlist
+router.get('/wishlist',wishlistController.wishListPage);
+ router.get('/add-to-wishlist/:id',wishlistController.addToWishList);
+ router.get('/wishlist/:id',wishlistController.removeFromWishlist);
+ router.get('/wishlist-to-cart/:id',wishlistController.wishlistToProDetails);
+
+//coupon
+router.post('/apply-coupon',couponControllers.applyCoupon);
 
 module.exports = router;

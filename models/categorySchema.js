@@ -21,6 +21,9 @@ const categorySchema = new Schema({
     default: true,
     required: true,
   },
+  images:[
+    { type : String }
+]
 });
 
 module.exports = mongoose.model("category", categorySchema);

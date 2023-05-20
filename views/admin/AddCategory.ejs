@@ -48,7 +48,7 @@
 </style>
 
 <h1><b> Add Category </b></h1>
-<form action="/admin/addCategory" method="POST">
+<form action="/admin/addCategory" method="POST" enctype="multipart/form-data">
   <div class="mb-3">
     <label for="category" class="form-label">Category Name:</label>
     <input type="text" class="form-control" id="category" name="category" required>
@@ -68,8 +68,15 @@
     <textarea class="form-control" id="description" name="description" rows="5" required></textarea>
   </div>
 
+  <div class="col-md-6 mb-3">
+    <label for="image" class="form-label">Image:</label>
+    <input type="file" class="form-control" id="image" name="image" multiple required>
 
+  </div>
   <a href="/admin/addcategory"><button type="submit" class="btn btn-primary">Add Category</button></a>
+</div>
+
+ 
 </form>
 
 <!-- Bootstrap JS -->

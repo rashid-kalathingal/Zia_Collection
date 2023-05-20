@@ -1,3 +1,8 @@
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
+  
+
+
+
 <%- include('../admin/partials/head.ejs') -%>
 
 
@@ -5,7 +10,6 @@
 <div class="d-flex" style="display: flex;">
 <div class="hea"><%- include('../admin/partials/nav.ejs') -%></div>
 <div class="heavhgnvbn" style="width: 100%;"><br><br><br><br>
-
 
 
     <style>
@@ -33,7 +37,7 @@
     <section>
        
     
-            <table class="table table-striped table-dark mt-5" id="tableid">
+            <table class="table table-striped table-dark mt-5" id="myTable">
                 <thead>
                     <tr>
                         <th scope="col">No</th>
@@ -78,37 +82,46 @@
                         </td>
                       </tr>
                     <% }); %>
+                    
                   
-                    <script>
-                      const blockButtons = document.querySelectorAll('.block-button');
-                      blockButtons.forEach(blockButton => {
-                        const itemId = blockButton.dataset.id;
-                        blockButton.addEventListener('click', () => {
-                          const url = blockButton.classList.contains('btn-danger')
-                            ? `/admin/block/${itemId}`
-                            : `/admin/unBlock/${itemId}`;
-                          blockButton.textContent = blockButton.classList.contains('btn-danger')
-                            ? 'Unblock'
-                            : 'Block';
-                          blockButton.classList.toggle('btn-danger');
-                          blockButton.classList.toggle('btn-primary');
-                          fetch(url).catch(console.error);
-                        });
-                      });
-                    </script>
                   </body>
 
                   
             </table>
         </div>
     </section>
+   
     
-    <script>
-        $(document).ready(function () {
-            $("#tableid").DataTable();
-        });
-    </script>
 
 </div>
 </div>
 <%- include('../admin/partials/script.ejs') -%>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
+
+<script>
+ 
+
+
+
+  const blockButtons = document.querySelectorAll('.block-button');
+  blockButtons.forEach(blockButton => {
+    const itemId = blockButton.dataset.id;
+    blockButton.addEventListener('click', () => {
+      const url = blockButton.classList.contains('btn-danger')
+        ? `/admin/block/${itemId}`
+        : `/admin/unBlock/${itemId}`;
+      blockButton.textContent = blockButton.classList.contains('btn-danger')
+        ? 'Unblock'
+        : 'Block';
+      blockButton.classList.toggle('btn-danger');
+      blockButton.classList.toggle('btn-primary');
+      fetch(url).catch(console.error);
+    });
+  });
+
+
+
+  $(document).ready( function () {
+$('#myTable').DataTable();
+} );
+</script>

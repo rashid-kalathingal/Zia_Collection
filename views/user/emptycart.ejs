@@ -1,1 +1,78 @@
-<h1>wergfddfg</h1>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Empty Cart</title>
+    <link rel="stylesheet" type="text/css" href="animate.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .cart {
+            width: 100%;
+            margin: 50px auto;
+            /* padding: 20px; */
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .cart-image {
+            width: 200px;
+            height: auto;
+            /* margin-bottom: 20px; */
+            animation: shake 0.5s infinite;
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 18px;
+            color: #777;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            10%, 30%, 50%, 70%, 90% {
+                transform: translateX(-10px);
+            }
+            20%, 40%, 60%, 80% {
+                transform: translateX(10px);
+            }
+        }
+    </style>
+</head>
+<br><br><br><br>
+<body>
+    <div class="cart">
+        <img src="https://cdni.iconscout.com/illustration/premium/thumb/empty-cart-4816550-4004141.png" alt="Empty Cart" class="cart-image">
+        <h1>Shopping Cart</h1>
+        <p>Your cart is empty.</p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+<br><br><br><br><br><br><br>

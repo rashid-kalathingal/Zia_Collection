@@ -26,7 +26,11 @@ const productSchema = new Schema({
     },
     images:[
         { type : String }
-    ]
+    ],
+    deleted: {
+        type: Boolean,
+        default: false
+    }
 })
 
 //model name: "Product" will be used to turn into a collection name in DB

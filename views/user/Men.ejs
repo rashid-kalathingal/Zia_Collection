@@ -1,4 +1,15 @@
+<!-- JavaScript -->
+<script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
 
+<!-- CSS -->
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css" />
+<!-- Default theme -->
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css" />
+<!-- Semantic UI theme -->
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/semantic.min.css" />
+<!-- Bootstrap theme -->
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/bootstrap.min.css" />
+<div class="container">
 <div class="row isotope-grid">
 				
     <%for(i=0;i<products.length;i++){%>
@@ -19,7 +30,7 @@
                             <%= products[i].price %>	
                         </span>
                     </div>
-                    <div class="block2-txt-child2 flex-r p-t-3">
+                    <div type="button" onclick="addToWishList('<%= products[i]._id %>')" class="block2-txt-child2 flex-r p-t-3">
                         <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
                             <img class="icon-heart1 dis-block trans-04" src="/images/icons/icon-heart-01.png" alt="ICON">
                             <img class="icon-heart2 dis-block trans-04 ab-t-l" src="/images/icons/icon-heart-02.png" alt="ICON">
@@ -30,3 +41,50 @@
         </div>
         <%}%>				
     </div>
+</div>
+    	<!-- Pagination -->
+        <div class="flex-c-m flex-w w-full p-t-38">
+            <% for (let i = 1; i <= totalPages; i++) { %>
+            <% if (i === currentPage) { %>
+                <a href="#" class="flex-c-m how-pagination1 trans-04 m-all-7 active-pagination1">
+                <%= i %>
+                </a>
+            <% } else { %>
+                <a href="/Men?page=<%= i %>" class="flex-c-m how-pagination1 trans-04 m-all-7">
+                <%= i %>
+                </a>
+            <% } %>
+            <% } %>
+        </div>
+
+    <script>
+        function addToWishList(proId) {
+    
+                  $.ajax({
+                url: `/add-to-wishlist/${proId}`,
+                method: 'get',
+                success: (response) => {
+            if (response.status) {
+                let wishListCount = $('#wishlist-count').html()
+                console.log(wishListCount)
+                wishListCount = parseInt(wishListCount) + 1
+                console.log(wishListCount)
+                $("#wishlist-count").html(wishListCount);
+    
+                alertify.set('notifier', 'delay', 2);
+                alertify.set('notifier', 'position', 'top-right');
+                alertify.success('added to the wishlist');
+    
+            } else {
+    
+                alertify.set('notifier', 'delay', 2);
+                alertify.set('notifier', 'position', 'top-right');
+                alertify.error('Already in your wishlist');
+            }
+    
+        }
+    })
+    }
+    
+    
+        </script>

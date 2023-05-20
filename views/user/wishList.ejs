@@ -1,0 +1,133 @@
+</style>
+<!-- JavaScript -->
+<script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+
+<!-- CSS -->
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css" />
+<!-- Default theme -->
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css" />
+<!-- Semantic UI theme -->
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/semantic.min.css" />
+<!-- Bootstrap theme -->
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/bootstrap.min.css" />
+
+
+<div class="container">
+  
+    <% if (locals.wishItems.products.length) { %>
+    <div class="row">
+      <div class="col-lg-12 mt-5 text-center">
+        <h3 class="fw-medium text-center"></h3>
+      </div>
+    </div>
+  
+  
+    <div class="row">
+        <% locals.wishItems.products.forEach(element=> { %>
+
+
+
+          <!-- <div class="col-sm-4 ">
+            <div class="wishlist-item text-center ">
+              <div>
+                <img class="img-fluid rounded mx-auto d-block" src="/uploads/<%= element.product_id.images[0] %>"
+                  alt="Product Name">
+                <h3 class="item-name">
+                  <%= element.product_id.productname %>
+                </h3> -->
+                <!-- <p class="item-description">Product description goes here.</p> -->
+                <!-- <p class="item-price">
+                  &#8377;<%= element.product_id.price %>
+                </p> -->
+                <!-- <button class="add-to-cart btn btn-block btn-success">Add to Cart</button> -->
+                <!-- <button class="add-to-cart btn btn-block btn-success"
+                  onclick="location.href='/wishlist-to-cart/<%= element.product_id._id  %>';"><span
+                    class="icon_bag_alt"></span> Add to cart</button>
+                <button class="remove-from-wishlist btn btn-block btn-danger" id="removeItem" type="button"
+                  onclick="removeWishList('<%= element.product_id._id %>')">Remove from Wishlist</button>
+              </div>
+  
+            </div>
+          </div> -->
+  
+
+
+          <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
+            <!-- Block2 -->
+            <div class="block2">
+                <div class="block2-pic hov-img0">
+                    <img src="/uploads/<%= element.product_id.images[0] %>" alt="IMG-PRODUCT">
+                    <a href="/oneproduct/<%= element.product_id._id  %>'" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 ">
+                        Quick View
+                    </a>
+                </div>
+                <div class="block2-txt flex-w flex-t p-t-14">
+                    <div class="block2-txt-child1 flex-col-l ">
+                        <a href="/product-detail" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+                            <%= element.product_id.name %>							</a>
+                        <span class="stext-105 cl3">
+                            &#8377;<%= element.product_id.price %>	
+                        </span>
+                    </div>
+                
+                <button class="add-to-cart btn btn-block btn-success"
+                onclick="location.href='/wishlist-to-cart/<%= element.product_id._id  %>';"><span
+                  class="icon_bag_alt"></span> Add to cart</button>
+              <button class="remove-from-wishlist btn btn-block btn-danger" id="removeItem" type="button"
+                onclick="removeWishList('<%= element.product_id._id %>')">Remove from Wishlist</button>
+                </div>
+            </div>
+        </div>
+
+
+          <% }) %>
+     </div>
+        <% }else{ %>
+          <div class="d-flex justify-content-center align-items-center vh-100 ">
+          
+              <div class="row justify-content-center align-items-center py-5">
+                <div class="col-md-12 col-lg-12 text-center">
+                  <h4>Your Wishlist is Empty</h4>
+                  <p class="mb-4">Add some products to your wishlist to keep track of them</p>
+                  <button class="btn btn-primary" onclick="window.location.href='/';">Add Products</button>
+                </div>
+              </div>
+       
+          </div>
+          
+          <% } %>
+   
+  </div>
+
+
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script>
+
+  function removeWishList(proId) {
+    // Display a confirmation SweetAlert message
+    swal({
+      title: "Are you sure?",
+      text: 'you wont be able to revert this',
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    })
+      .then((willCancel) => {
+        if (willCancel) {
+         
+          // Redirect to the cancel order page if the user confirms the cancellation
+          alertify.set('notifier', 'delay', 2);
+          alertify.set('notifier', 'position', 'top-right');
+          alertify.error('item removed');
+          location.href = `/wishlist/${proId}`;
+        }
+      });
+  }
+
+
+// Disable right-click context menu
+document.addEventListener('contextmenu', function(event) {
+  event.preventDefault();
+});
+
+</script>

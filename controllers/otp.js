@@ -1,6 +1,6 @@
 require("dotenv").config({ path: "../.env" });
 require("custom-env").env(true);
-
+//fast 2 sms otp varification
 module.exports = {
   OTP: (mobile, otp) => {
     return new Promise((resolve, reject) => {

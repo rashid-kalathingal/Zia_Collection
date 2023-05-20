@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
 <%- include('../admin/partials/head.ejs') -%>
 
 
@@ -47,7 +48,7 @@
   
 </div class="mt-5">
 
-<table class="table table-striped table-dark mt-5">
+<table class="table table-striped table-dark mt-5" id="myTable">
 
   <thead>
     <tr style="border-width: 5px; background-color: rgb(245, 237, 237);" >
@@ -58,6 +59,7 @@
       <th scope="col">Price</th>
       <th>Image</th>
       <th>Option</th>
+      <!-- <th scope="col">Deleted</th> -->
     </tr>
   </thead>
   <tbody>
@@ -66,7 +68,9 @@
       <th scope="row"><%= index+1 %></th>
       <td><%= item.name %></td>
       <td><%= item.gender %></td>
-      <td><%= item.description %></td>
+      <td style="height: 200px; white-space: pre-wrap;">
+        <%= item.description %>
+      </td>
       <td><%= item.price %></td>
       <td>
         <img
@@ -78,13 +82,27 @@
       <td>
         <div style="display: flex;">
           <a href="/admin/editProduct/<%=item._id%>" class="btn btn-primary btn-sm me-3">Edit</a>
+          <!-- <form action="/admin/deleteProduct/<%=item._id%>?_method=DELETE" method="POST" style="display: inline-block;">
+            <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete('<%=item.productname%>', '<%=item._id%>')">Soft Delete</button>
+          </form> -->
+          <% if(! item.deleted){ %>
+            <button class="btn btn-danger block-button" data-id="<%= item._id %>">
+              Block
+            </button>
 
-        
+            <% } else {%>
+            <button class="btn btn-primary block-button" data-id="<%= item._id %>">
+              UnBlock
+            </button>
+            
+         <%   }%>
         </div>
-       
-      
       </td>
+      <!-- <td><%= item.deleted ? 'Yes' : 'No' %></td> -->
     </tr>
+
+
+
     <% }) %>
   </tbody>
 </table>
@@ -92,3 +110,71 @@
 </div>
 </div>
 <%- include('../admin/partials/script.ejs') -%>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
+<script>
+  $(document).ready( function () {
+$('#myTable').DataTable();
+} );
+</script>
+
+<script>
+//   document.getElementById("myForm").addEventListener("submit", function(event) {
+//   event.preventDefault(); // Prevent the default form submission
+// });
+
+
+
+// function deleteItem(itemId) {
+//   if (confirm("Are you sure?")) {
+//     $.ajax({
+//       url: '/deleteProduct/' + itemId,
+//       method: 'DELETE',
+//       success: function(response) {
+//         console.log("helloooo")
+//         // if the item is successfully deleted, remove it from the DOM
+//         $('#deleteButton_' + itemId).parent().remove();
+//         toastr.success('Item deleted successfully.');
+//       },
+//       error: function(jqXHR, textStatus, errorThrown) {
+//         console.log(textStatus, errorThrown);
+//         toastr.error('Error deleting item.');
+//       }
+//     });
+//   }
+// }
+
+// function confirmDelete(productName, productId) {
+//   // create custom alert
+//   let confirmDeleteAlert = `
+//     <div class="alert alert-danger alert-dismissible fade show alert-top" role="alert">
+//       Are you sure you want to soft delete <strong>${productName}</strong>?
+//       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+//       <form action="/admin/deleteProduct/${productId}?_method=DELETE" method="POST" style="display: inline-block; margin-top: 10px;">
+//         <button type="submit" class="btn btn-danger btn-sm">Yes, Soft Delete</button>
+//       </form>
+//     </div>
+//   `;
+
+//   // append the alert to the body
+//   $('body').append(confirmDeleteAlert);
+// }
+
+const blockButtons = document.querySelectorAll('.block-button');
+  blockButtons.forEach(blockButton => {
+    const itemId = blockButton.dataset.id;
+    blockButton.addEventListener('click', () => {
+      const url = blockButton.classList.contains('btn-danger')
+        ? `/admin/softdeleteproduct/${itemId}`
+        : `/admin/undoproduct/${itemId}`;
+      blockButton.textContent = blockButton.classList.contains('btn-danger')
+        ? 'Unblock'
+        : 'Block';
+      blockButton.classList.toggle('btn-danger');
+      blockButton.classList.toggle('btn-primary');
+      fetch(url).catch(console.error);
+    });
+  });
+
+
+
+</script>
