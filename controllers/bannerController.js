@@ -15,8 +15,17 @@ const upload = multer({ storage });
 
 exports.getBanner = async (req, res) => {
   try {
+    //console.log("where are you");
+    let adminDetails = req.session.admin;
     const banner = await Banner.find();
-    res.render("admin/banner", { admin: true, banner });
+   // console.log(banner, "nnnnnnnnnnnnn");
+    res.locals.banner = banner;
+    res.render("admin/banner", {
+      admin: true,
+      banner,
+      adminDetails,
+      noShow: true,
+    });
   } catch (error) {
     console.log(error);
     res.status(500).send("Internal Server Error");

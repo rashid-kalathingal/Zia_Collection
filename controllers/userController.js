@@ -5,6 +5,9 @@ const mongoose = require("mongoose");
 const Product = require("../models/productSchema");
 const Category = require("../models/categorySchema");
 const Banner = require("../models/bannerSchema");
+const Address = require("../models/addressSchema");
+const Offer = require("../models/offerSchema");
+const ObjectId = mongoose.Types.ObjectId;
 //add new user and also checking that new user also existing
 exports.postSignup = async (req, res) => {
   try {
@@ -69,7 +72,7 @@ exports.home = async function (req, res, next) {
     const page = parseInt(req.query.page) || 1;
     const perPage = 8;
     const docCount = await Product.countDocuments({});
-    const products = await Product.find()
+    const products = await Product.find({ deleted: false })
       .skip((page - 1) * perPage)
       .limit(perPage);
     const banner = await Banner.find();
@@ -122,7 +125,7 @@ exports.product = async function (req, res, next) {
       .skip((page - 1) * perPage)
       .limit(perPage);
     loggedin = req.session.userloggedIn;
-    const categories = await Category.find();
+    const categories = await Category.find({ isListed: true });
     const cartCount = req.cartCount;
 
     res.render("user/product", {
@@ -139,10 +142,14 @@ exports.product = async function (req, res, next) {
   }
 };
 
-exports.profile = function (req, res, next) {
+exports.profile = async (req, res, next) => {
+  let user = req.session.user;
+  let userData = await User.findOne({ user });
   const cartCount = req.cartCount;
   loggedin = req.session.userloggedIn;
-  res.render("user/profile", { loggedin, cartCount });
+  const addressData = await Address.find({ user: user._id });
+  const address = addressData[0].address;
+  res.render("user/profile", { loggedin, cartCount, user, address, userData });
 };
 
 //preview for single product
@@ -151,8 +158,28 @@ exports.oneproduct = async (req, res) => {
     let id = req.params.id;
     // console.log(id);
     const singleProduct = await Product.findById(req.params.id);
-    console.log(singleProduct);
+    console.log(singleProduct, "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
     // let objId = new ObjectId(id)
+    let proid = new ObjectId(singleProduct.category);
+    console.log(proid, "xyxyxyxyxyxyx");
+    const categoryInfo = await Category.aggregate([
+      {
+        $match: {
+          _id: proid,
+        },
+      },
+    ]);
+    let categoryName = categoryInfo[0].category;
+    console.log(categoryInfo, "jjjjjjjjjjjjjjjjjjj");
+    console.log(categoryName, "jjjjjjjjjjjjjjjjjjj");
+
+    const offer = await Offer.find({ category: categoryName });
+    console.log(offer, "gggg");
+    let offerdiscount;
+    if (offer.length > 0) {
+      offerdiscount = offer[0].discount;
+      console.log(offerdiscount, "yyeyyeyeyeyye");
+    }
 
     // let singleProduct = await Product.findOne({_id:objId})
     // let user = req.session.user;
@@ -167,6 +194,8 @@ exports.oneproduct = async (req, res) => {
       loggedin,
       cartCount,
       products,
+      categoryName,
+      offerdiscount,
     }); //passing the singleProduct values while rendering the page...
   } catch (error) {
     console.log(error);
@@ -197,6 +226,11 @@ exports.signUp = function (req, res, next) {
   loggedin = req.session.userloggedIn;
   res.render("user/signUp1", { noShow: true, loggedin });
 };
+//render forgetpage
+exports.forgetPassword = function (req, res, next) {
+  loggedin = req.session.userloggedIn;
+  res.render("user/passwordForget", { noShow: true, loggedin });
+};
 //render otp page
 exports.OTP = function (req, res, next) {
   loggedin = req.session.userloggedIn;
@@ -215,7 +249,7 @@ exports.Men = async function (req, res, next) {
     const page = parseInt(req.query.page) || 1;
     const perPage = 8;
     const docCount = await Product.countDocuments({});
-    const products = await Product.find({ gender: "Men" })
+    const products = await Product.find({ gender: "Men" , deleted:"false" })
       .skip((page - 1) * perPage)
       .limit(perPage);
     loggedin = req.session.userloggedIn;
@@ -393,5 +427,75 @@ exports.mobileVerify = async (req, res, next) => {
   } catch (error) {
     console.log(error);
     res.status(500).send({ success: false, message: "Error verifying user" });
+  }
+};
+
+exports.verifyMobileOtpwithforget = async (req, res, next) => {
+  try {
+    const { mobile, userOtp } = req.body;
+
+    // Verify the OTP
+    if (parseInt(userOtp) !== req.session.otP) {
+      return res.status(400).json({ success: false, message: "Invalid OTP" });
+    }
+
+    // Find the user by mobile number
+    const user = await User.findOne({ mobile });
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    // Check if the user account is active
+    if (!user.isActive) {
+      return res
+        .status(402)
+        .json({ success: false, message: "Account was blocked. Contact us." });
+    }
+
+    req.session.user = user;
+    res
+      .status(200)
+      .json({ success: true, message: "OTP verification successful" });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({
+        success: false,
+        message: "An error occurred. Please try again later.",
+      });
+  }
+};
+
+exports.resetPassword = async (req, res, next) => {
+  try {
+    const { password } = req.body;
+    const userId = req.session.user._id;
+
+    if (!userId) {
+      return res
+        .status(401)
+        .json({ success: false, message: "User not authenticated" });
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Update the password
+    await User.updateOne({ _id: userId }, { password: hashedPassword });
+
+    res
+      .status(200)
+      .json({ success: true, message: "Password reset successful" });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({
+        success: false,
+        message: "An error occurred. Please try again later.",
+      });
   }
 };

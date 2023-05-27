@@ -296,7 +296,7 @@
               <div class="card-body border border-2">
                 <div class="row p-2 bg-white border rounded">
                   <div class="col-md-3 mt-1"><img class="img-fluid img-responsive rounded product-image"
-                      src="/uploads/<%= prd.item.images[0] %>" style="height: 100px; width: 100px"></div>
+                      src="/uploads/<%= prd.item.images[0] %>" style="height: 100px; width: 100px;"></div>
                   <div class="col-md-6 mt-1">
                     <h5><b>
                         <%= prd.item.name%>
@@ -319,9 +319,9 @@
                     </h6>
                     <div class="d-flex flex-column mt-4">
                       <% if (prd.deliverystatus !=='returned' ) { %>
-                        <!-- <button class="btn btn-outline-secondary btn-sm" <%=prd.orderstatus==='cancelled' ? 'hidden' : ''
+                        <button class="btn btn-outline-secondary btn-sm" <%=prd.orderstatus==='cancelled' ? 'hidden' : ''
                           %> type="button" onclick="location.href='/invoice/?orderId=<%= element._id %>&productId=<%=
-                              prd.item._id %>';">Invoice</button> -->
+                              prd.item._id %>';">Invoice</button>
   
                         <% if (prd.deliverystatus==='delivered' ) { %>
                           <button class="btn btn-danger btn-sm mt-2"

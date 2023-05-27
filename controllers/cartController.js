@@ -4,7 +4,7 @@ const User = require("../models/userSchema");
 const ObjectId = mongoose.Types.ObjectId;
 const Product = require("../models/productSchema");
 const Order = require("../models/orderSchema");
-
+const Wallet = require("../models/walletSchema");
 //to find cart cout on add product on cart
 exports.cartCount = async (req, res, next) => {
   try {
@@ -13,7 +13,7 @@ exports.cartCount = async (req, res, next) => {
     let cartCount = 0;
     if (user) {
       const cart = await Cart.findOne({ userId: user._id }); // Await the query to get the cart object
-
+      const wallet = await Wallet.findOne({ userId: user._id }); //create a waller for user
       if (cart) {
         // Replace cart.products.length with cart.products.reduce((acc, product) => acc + product.quantity, 0)
         cartCount = cart.products.reduce(
@@ -40,6 +40,8 @@ exports.addtoCart = async (req, res) => {
   }
   const productId = new ObjectId(req.params.id);
   const userId = req.session.user._id; // we will get user id here
+  const offerPrice = req.query.discount;
+  console.log(offerPrice, "zzzzzzzzzzzzzzzzzzzzz");
   // console.log(productId,"lllllllllllll");
   // console.log(userId,"xxxxxxxxxxxxxx");
   // console.log(req.query.size,'size')
@@ -55,13 +57,17 @@ exports.addtoCart = async (req, res) => {
     let proObj = {
       item: productId,
       quantity: quantity,
-      currentPrice: proPrice.price,
+      currentPrice: req.query.discount ? offerPrice : proPrice.price,
       tax: taxAmount,
       size: req.query.size,
       deliverystatus: "not-shipped",
       orderstatus: "processing",
     };
-    //console.log(proObj,"wsedrftgyhuijhugfydtrserdftyguhihygtfrdessrdtfyguhiyftdresrdtfyghuij");
+
+    console.log(
+      proObj,
+      "wsedrftgyhuijhugfydtrserdftyguhihygtfrdessrdtfyguhiyftdresrdtfyghuij"
+    );
     let userCart = await Cart.findOne({ userId: new ObjectId(userId) });
     // console.log(userCart,'🔥🔥🔥🔥🔥');
     let cartCheckProId = req.params.id;
@@ -144,7 +150,7 @@ exports.getCartProducts = async (req, res) => {
           },
         },
       ]);
-      // console.log(cartItems, "cartItemssss");
+      console.log(cartItems, "cartItemssss");
 
       let total = await Cart.aggregate([
         {
@@ -195,7 +201,8 @@ exports.getCartProducts = async (req, res) => {
         },
       ]);
 
-      //  console.log(total,"loooooooooooooooooo")
+      // console.log(total,"loooooooooooooooooo")
+      // console.log(total[0].total,"yyyyyyyyyyyyyyyyyyyyyy");
 
       //  console.log(cartItems,'cart')
       //  console.log(total,'dispak')
@@ -207,7 +214,7 @@ exports.getCartProducts = async (req, res) => {
         tax = total[0].totalTax;
         totalWithTax = total[0].totalWithTax;
       }
-      // console.log(total,'....')
+      console.log(total, "....");
 
       const cartCount = req.cartCount;
       if (cartItems.length === 0) {
@@ -249,6 +256,7 @@ exports.changeProductQuantity = async (req, res) => {
     quantity = parseInt(quantity);
     console.log(count, "//////////");
     console.log(quantity, "??????????");
+    let userId = req.session.user._id;
 
     if (count == -1 && quantity == 1) {
       await Cart.updateOne(
@@ -270,7 +278,7 @@ exports.changeProductQuantity = async (req, res) => {
 
       let total = await Cart.aggregate([
         {
-          $match: { user: req.session.userId },
+          $match: { userId },
         },
         {
           $unwind: "$products",
@@ -278,10 +286,10 @@ exports.changeProductQuantity = async (req, res) => {
         {
           $project: {
             item: { $toObjectId: "$products.item" },
+            quantity: "$products.quantity",
             size: "$products.size",
             currentPrice: "$products.currentPrice",
             tax: "$products.tax",
-            quantity: "$products.quantity",
           },
         },
         {
@@ -295,17 +303,16 @@ exports.changeProductQuantity = async (req, res) => {
         {
           $project: {
             item: 1,
+            quantity: 1,
             size: 1,
             currentPrice: 1,
             tax: 1,
-            quantity: 1,
             productInfo: { $arrayElemAt: ["$productInfo", 0] },
           },
         },
         {
           $group: {
             _id: null,
-
             totalTax: { $sum: { $multiply: ["$quantity", "$tax"] } },
             total: { $sum: { $multiply: ["$quantity", "$currentPrice"] } },
             totalWithTax: {
@@ -313,6 +320,7 @@ exports.changeProductQuantity = async (req, res) => {
                 $multiply: ["$quantity", { $add: ["$tax", "$currentPrice"] }],
               },
             },
+            // total: { $sum: { $multiply: ["$quantity", "$productInfo.price"] } },
           },
         },
       ]);
@@ -320,6 +328,7 @@ exports.changeProductQuantity = async (req, res) => {
       // response.status = true;
       res.json({ success: true, total });
       console.log("else worked");
+      console.log(total, "xxx");
     }
   } catch (error) {
     console.error(error);

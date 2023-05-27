@@ -2,6 +2,8 @@ const Wishlist = require("../models/wishlistSchema");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const Product = require("../models/productSchema");
+const Wallet = require("../models/walletSchema");
+const Order = require("../models/orderSchema");
 
 exports.wishListPage = async (req, res) => {
   // Access cartCount value from req object
@@ -116,5 +118,39 @@ exports.wishlistToProDetails = async (req, res) => {
     res.render("user/oneproduct", { singleProduct, cartCount, user });
   } catch (error) {
     console.log(error);
+  }
+};
+
+
+exports.walletPage = async (req, res) => {
+  try {
+    const cartCount = req.cartCount;
+
+    if (!req.session.user) {
+      return res.redirect("/login");
+    }
+
+    const userId = req.session.user._id;
+
+    let walletItems = await Wallet.findOne({ userId });
+
+    if (!walletItems) {
+      walletItems = new Wallet({
+        userId,
+        balance: 0,
+      });
+    }
+
+    const balance = walletItems.balance;
+    console.log(balance);
+
+    res.render("user/wallet", {
+      user: req.session.user,
+      cartCount,
+      balance,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Internal Server Error");
   }
 };

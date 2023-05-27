@@ -1,3 +1,8 @@
+<head>
+  <!-- Add this inside the <head> tag of your HTML file -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</head>
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
 <%- include('../admin/partials/head.ejs') -%>
 
@@ -8,8 +13,14 @@
 <div class="heavhgnvbn" style="width: 100%;"><br><br><br><br>
 
 
-
+<div style="padding-left: 30px; padding-right: 30px;">
+  <a href="/admin/addCategory">
+    <button type="button" class="btn btn-outline-secondary add-category-button">
+      Add Category
+    </button>
+  </a>
 <div class="container">
+
   <style>
     .add-category-button {
       background-color: rgb(131, 138, 131);
@@ -27,15 +38,12 @@
   }
  
   </style>
- <a href="/admin/addCategory">
-    <button type="button" class="btn btn-outline-secondary add-category-button">
-      Add Category
-    </button>
-  </a>
+ 
+  
   
   <style>
     .add-category-button {
-      border-color: #214229;
+      border-color: #78937f;
       color: #0e3617;
       transition: all 0.2s ease-in-out;
     }
@@ -106,21 +114,55 @@
 
 
     <script>
-        const blockButtons = document.querySelectorAll('.block-button');
-        blockButtons.forEach(blockButton => {
-          const itemId = blockButton.dataset.id;
-          blockButton.addEventListener('click', () => {
-            const url = blockButton.classList.contains('btn-danger')
-              ? `/admin/blocks/${itemId}`
-              : `/admin/unBlocks/${itemId}`;
-            blockButton.textContent = blockButton.classList.contains('btn-danger')
-              ? 'Unblock'
-              : 'Block';
-            blockButton.classList.toggle('btn-danger');
-            blockButton.classList.toggle('btn-primary');
-            fetch(url).catch(console.error);
-          });
+     const blockButtons = document.querySelectorAll('.block-button');
+blockButtons.forEach(blockButton => {
+  const itemId = blockButton.dataset.id;
+  blockButton.addEventListener('click', () => {
+    const url = blockButton.classList.contains('btn-danger')
+      ? `/admin/blocks/${itemId}`
+      : `/admin/unBlocks/${itemId}`;
+    const confirmationText = blockButton.classList.contains('btn-danger')
+      ? 'Are you sure you want to unblock this item?'
+      : 'Are you sure you want to block this item?';
+      
+    Swal.fire({
+      title: 'Confirmation',
+      text: confirmationText,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes',
+      cancelButtonText: 'Cancel',
+      customClass: {
+        confirmButton: 'swal-button swal-button--confirm',
+        cancelButton: 'swal-button swal-button--cancel',
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        blockButton.textContent = blockButton.classList.contains('btn-danger')
+          ? 'Unblock'
+          : 'Block';
+        blockButton.classList.toggle('btn-danger');
+        blockButton.classList.toggle('btn-primary');
+        fetch(url).catch(console.error);
+        
+        // Show success message after the action is completed
+        Swal.fire({
+          title: 'Success',
+          text: 'Action completed successfully!',
+          icon: 'success',
+          confirmButtonColor: '#3085d6',
+          confirmButtonText: 'OK',
+          customClass: {
+            confirmButton: 'swal-button swal-button--confirm',
+          },
         });
+      }
+    });
+  });
+});
+
       </script>
 
 
@@ -128,7 +170,7 @@
 
   </tbody>
 </table>
-
+</div>
 </div>
 </div>
 <%- include('../admin/partials/script.ejs') -%>

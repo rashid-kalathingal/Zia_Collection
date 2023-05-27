@@ -71,8 +71,8 @@ exports.viewOrderProducts = async (req, res) => {
       },
     ]);
 
-    console.log(cartItems[0].products, "💥💥💥");
-    console.log(cartItems[0].productInfo, "hgjhgjhgjhgjhgjhghg");
+    // console.log(cartItems[0].products, "💥💥💥");
+    // console.log(cartItems[0].productInfo, "hgjhgjhgjhgjhgjhghg");
     // Access cartCount value from req object
     const cartCount = req.cartCount;
     // Add the quantity of each product to the corresponding product object
@@ -82,7 +82,6 @@ exports.viewOrderProducts = async (req, res) => {
 
     res.render("user/viewProductDetails", {
       user,
-      video: true,
       cartCount,
       products: cartItems[0].productInfo,
     });
@@ -93,8 +92,6 @@ exports.viewOrderProducts = async (req, res) => {
 };
 
 exports.cancelOrder = async (req, res) => {
-  console.log("delete??");
-
   let productId = req.query.productId;
   let orderId = req.query.orderId;
   let reason = req.query.reason; // Retrieve the reason from the query parameters
@@ -222,4 +219,41 @@ exports.orderPlacedCod = (req, res) => {
     console.log(error);
     res.status(500).send("Internal Server Error");
   }
+};
+
+exports.invoice = async (req, res) => {
+  let productId = req.query.productId;
+  let orderId = req.query.orderId;
+  console.log(productId, orderId, "first pro second order");
+
+  let orders = await Order.find({ _id: orderId })
+    .populate({
+      path: "products.item",
+      model: "Product",
+    })
+    .exec();
+
+  console.log(orders, "total");
+
+  let product = null;
+  for (let i = 0; i < orders.length; i++) {
+    let order = orders[i];
+    product = order.products.find(
+      (product) => product.item._id.toString() === productId
+    );
+    if (product) {
+      // If product found, fetch the details from the Product model
+      break; // Exit the loop once product is found
+    }
+  }
+
+  console.log(product, "particluar");
+  console.log(orders, "total");
+
+  res.render("user/invoice", {
+    orders,
+    product,
+    user: req.session.user,
+    other: true,
+  });
 };

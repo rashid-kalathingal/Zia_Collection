@@ -1,4 +1,4 @@
-<br><br><br><br>
+<br /><br /><br /><br />
 <div class="container">
   <div class="row">
     <div class="col-md-12">
@@ -19,31 +19,24 @@
           </thead>
           <tbody>
             <% products.forEach(product=> { %>
-              <tr>
-                <td><img src="/uploads/<%= product.images[0] %>" class="img-thumbnail" alt="..."
-                    style="max-width: 100px;"></td>
-                <td>
-                  <%= product.productname %>
-                </td>
-                <td>
-                  <%= product.company %>
-                </td>
-                <td>
-                  <%= product.type %>
-                </td>
-                <td>
-                  <%= product.deal %>
-                </td>
-                <td>₹<%= product.price %>
-                </td>
-                <td>
-                  <%= product.size %>
-                </td>
-                <td>
-                  <%= product.quantity %>
-                </td>
-              </tr>
-              <% }) %>
+            <tr>
+              <td>
+                <img
+                  src="/uploads/<%= product.images[0] %>"
+                  class="img-thumbnail"
+                  alt="..."
+                  style="max-width: 100px"
+                />
+              </td>
+              <td><%= product.productname %></td>
+              <td><%= product.company %></td>
+              <td><%= product.type %></td>
+              <td><%= product.deal %></td>
+              <td>₹<%= product.price %></td>
+              <td><%= product.size %></td>
+              <td><%= product.quantity %></td>
+            </tr>
+            <% }) %>
           </tbody>
         </table>
       </div>
@@ -51,4 +44,4 @@
   </div>
 </div>
 
-<br><br><br>
+<br /><br /><br />

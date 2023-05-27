@@ -1,3 +1,8 @@
+<head>
+    <!-- Add this inside the <head> tag of your HTML file -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
 <style>
     /* .card-hover-shadow:hover {
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
@@ -151,7 +156,7 @@
   
     <section class="ftco-section">
   
-      <div class="container">
+      <div class="">
         <div class="row justify-content-center">
           <div class="col-xl-10 ftco-animate">
             <form action="#" id="checkout-form" class="billing-form" style="background-color: #fdfbfb; padding: 20px;">
@@ -161,12 +166,12 @@
               </div>
   
   
-              <h3 class="mb-4 billing-heading">Billing Details</h3>
+              <h3 class="mb-4 billing-heading" >Billing Details</h3>
               <div class="row align-items-end">
                 <div class="container" id="address-list">
                   <div class="row">
                     <% for (let i=0; i < address.length; i++) { %>
-                      <div class="col-sm-12 col-md-8 offset-md-2">
+                      <div class="col-sm-12 col-md-6">
                         <div class="card mx-auto w-100 card-hover-shadow mb-4" style="max-width: 100% !important;">
                           <div class="card-body">
                             <div class="row">
@@ -176,7 +181,7 @@
                                     value="<%= address[i]._id %>" <% if (i==0) { %> checked <% } %>>
                                 </div>
                               </div>
-                              <div class="col-md-7">
+                              <div class="col-md-11">
                                 <h5 class="card-title mb-1">
                                   <%= `${address[i].firstname} ${address[i].lastname}` %>
                                 </h5>
@@ -198,46 +203,41 @@
                                 <p class="card-text mt-1 mb-0">Phone: +91 <%= address[i].mobile %>
                                 </p>
                               </div>
-                              <!-- <div class="col-md-4 text-md-right">
-                              <a href="#" class="btn btn-link btn-lg">Edit</a>
-                              <a href="#" class="btn btn-link btn-lg text-danger">Delete</a>
-                            </div> -->
                             </div>
                           </div>
                         </div>
                       </div>
-                      <% } %>
+                    <% } %>
                   </div>
                 </div>
               </div>
+              
               <section>
   
   
   
                 <div class="row mt-5 pt-3 d-flex">
                   <div class="col-md-6 d-flex">
-                    <div class="cart-detail cart-total bg-light p-3 p-md-4">
-                      <h3 class="billing-heading mb-4">Cart Total</h3>
+                    <div class="cart-detail cart-total bg-light p-3 p-md-4" style="margin-left: 80px;">
+                      <h3 class="billing-heading mb-4" >Cart Total</h3>
                       <p class="d-flex">
-                        <span>Subtotal</span>
+                        <span>Subtotal   :</span>
                         <% if (total.length) { %>
-                          <span>₹<%=total[0].total %></span>
+                          <span>  ₹<%=total[0].total %></span>
   
                       </p>
                       <p class="d-flex">
-                        <span>Tax</span>
-                        <span>₹<%= total[0].totalTax %></span>
+                        <span>Tax    :</span>
+                        <span>  ₹<%= total[0].totalTax %></span>
                       </p>
                       <p class="d-flex">
-                        <span>Discount Coupon</span>
+                        <span>Discount Coupon    : </span>
                         <% if (locals.discountAmount) { %>
-                          <span id="couponDiscount">₹ <%= locals.discountAmount %></span>
+                          <span id="couponDiscount">  ₹ <%= locals.discountAmount %></span>
                         <% } else { %>
-                          <span id="couponDiscount"></span>
+                          <span id="couponDiscount">   No Coupon</span>
                         <% } %>
                       </p>
-                      
-  
                       <hr>
                       <p class="d-flex total-price">
                         <span>Total</span>
@@ -248,14 +248,15 @@
                           <span id="taxWithTotal">₹ <%= total[0].totalWithTax %></span>
                         <% } %>
                       </p>
-                      
-                      
                       <% }else{ %>
                         <span id="total">0</span>
-  
                         <% } %>
                     </div>
                   </div>
+
+
+
+
                   <div class="col-md-6">
                     <div class="cart-detail bg-light p-3 p-md-4">
                       <h3 class="billing-heading mb-4">Payment Method</h3>
@@ -283,7 +284,16 @@
                         </div>
                       </div>
                     </div> -->
- 
+
+                    <div class="form-group">
+                      <div class="col-md-12">
+                        <div class="radio">
+                          <label><input type="radio" name="payment-method" value="Wallet" class="mr-2">
+                            Wallet</label>
+                        </div>
+                      </div>
+                    </div>
+
                       <div class="form-group">
                         <div class="col-md-12">
                           <div class="radio">
@@ -397,9 +407,25 @@
               console.log(response.payment, 'payment payapal');
               window.location.href = response.payment.links[1].href
   
-            } else {
+            }else if (response.emptyWallet) {
+                          Swal.fire({
+                            title: "Insufficient Funds",
+                            text: "Your Wallet is not enough to buy these Clothes",
+                            icon: "error",
+                            showCancelButton: true,
+                            cancelButtonText: "Cancel",
+                            confirmButtonText: "Check My Wallet",
+                            confirmButtonColor: "#3085d6",
+                            cancelButtonColor: "#d33",
+                          }).then((result) => {
+                            if (result.isConfirmed) {
+                              // Redirect to the wallet page
+                              window.location.href = "/wallet";
+                            }
+                          });
+                        } else {
               // hideLoader()
-              razorpayPayment(response)
+                razorpayPayment(response)
             }
           }
         });
@@ -408,13 +434,13 @@
 
 
       function razorpayPayment(order) {
-//  console.log("ghghghghghghghasdfghjkhgfdsdfy");
+
         var options = {
   
           "key": "rzp_test_5rsUJArIQhlXkX", // Enter the Key ID generated from the Dashboard
           "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
           "currency": "INR",
-          "name": "Step Up",
+          "name": "ZIA store",
           "description": "Test Transaction",
           "image": "/images/Step.png",
           "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1

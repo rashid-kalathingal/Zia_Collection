@@ -1,0 +1,102 @@
+<body
+  style="
+    background-image: url('https://img5.goodfon.com/original/1926x938/f/dd/koshelek-portmone-remen-chasy-kniga.jpg');
+    background-size: cover;
+  "
+>
+  <main>
+    <br /><br />
+    <div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="user-info text-center">
+            <h2 style="font-style: italic">My Wallet</h2>
+            <div class="inner-info">
+              <p>User: <span id="user-name"><%= user.name %></span></p>
+              <p>Email: <span id="user-email"><%= user.email %></span></p>
+              <p>
+                Balance: $<span id="wallet-balance" style="font-size: 24px"
+                  ><%= balance %></span
+                >
+              </p>
+            </div>
+            <br /><br />
+            <!-- <button type="button" onclick="history.back();" class="btn btn-fw mt-3 custom-button">
+                  back
+                </button> -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <br /><br />
+    <!-- <div class="purchase">
+        <button href="/home" id="purchase-button">Purchase</button>
+      </div> -->
+  </main>
+
+  <style>
+    .custom-button {
+      margin-left: 33px;
+      background-color: #738ea6;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .custom-button:hover {
+      background-color: #2266b3;
+    }
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      height: 82vh;
+    }
+
+    .user-info {
+      height: 292px;
+      width: 460px;
+      flex: 1 1 50%;
+      background-color: #dcdcdc;
+      padding: 2rem;
+      border-radius: 8px;
+    }
+
+    .user-info h2 {
+      font-style: italic;
+    }
+
+    .inner-info {
+      margin-top: 2rem;
+    }
+
+    .inner-info h3 {
+      font-style: italic;
+    }
+
+    .inner-info p {
+      margin-bottom: 0.5rem;
+    }
+
+    .purchase {
+      margin-top: 2rem;
+    }
+
+    #purchase-button {
+      background-color: #3085d6;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+  </style>
+</body>

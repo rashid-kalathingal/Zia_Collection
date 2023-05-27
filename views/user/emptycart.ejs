@@ -1,78 +1,68 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Empty Cart</title>
-    <link rel="stylesheet" type="text/css" href="animate.css">
+    <link rel="stylesheet" type="text/css" href="animate.css" />
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
+      body {
+        background-image: url("https://c1.wallpaperflare.com/preview/421/798/360/basket-business-carts-coins.jpg");
+        background-size: cover;
+        background-position: center;
+      }
 
-        .cart {
-            width: 100%;
-            margin: 50px auto;
-            /* padding: 20px; */
-            text-align: center;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            animation: fadeIn 0.5s ease-in-out;
-        }
+      .cart {
+        text-align: center;
+        margin-top: 150px;
+        color: white;
+      }
 
-        .cart-image {
-            width: 200px;
-            height: auto;
-            /* margin-bottom: 20px; */
-            animation: shake 0.5s infinite;
-        }
+      .cart-image {
+        width: 200px;
+        height: 200px;
+      }
 
-        h1 {
-            font-size: 24px;
-            color: #333;
-            margin-bottom: 10px;
-        }
+      .cart h1 {
+        font-size: 32px;
+        font-weight: bold;
+        margin-top: 20px;
+        color: #2e2626b6;
+      }
 
-        p {
-            font-size: 18px;
-            color: #777;
-        }
+      .cart p {
+        font-size: 18px;
+        margin-bottom: 20px;
+        color: black;
+      }
 
-        @keyframes fadeIn {
-            0% {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+      .cart-button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 18px;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+      }
 
-        @keyframes shake {
-            0%, 100% {
-                transform: translateX(0);
-            }
-            10%, 30%, 50%, 70%, 90% {
-                transform: translateX(-10px);
-            }
-            20%, 40%, 60%, 80% {
-                transform: translateX(10px);
-            }
-        }
+      .cart-button:hover {
+        background-color: #0062cc;
+        cursor: pointer;
+      }
     </style>
-</head>
-<br><br><br><br>
-<body>
+  </head>
+  <br /><br /><br /><br />
+  <body>
     <div class="cart">
-        <img src="https://cdni.iconscout.com/illustration/premium/thumb/empty-cart-4816550-4004141.png" alt="Empty Cart" class="cart-image">
-        <h1>Shopping Cart</h1>
-        <p>Your cart is empty.</p>
+      <!-- <img src="https://c1.wallpaperflare.com/preview/421/798/360/basket-business-carts-coins.jpg" alt="Empty Cart" class="cart-image"> -->
+      <h1>Shopping Cart</h1>
+      <br />
+      <p>Your cart is empty.</p>
+      <br />
+      <a href="/home">
+        <button class="cart-button">Continue Shopping</button>
+      </a>
     </div>
-
+    <br /><br /><br /><br /><br /><br /><br /><br />
     <script src="script.js"></script>
-</body>
+  </body>
 </html>
-<br><br><br><br><br><br><br>

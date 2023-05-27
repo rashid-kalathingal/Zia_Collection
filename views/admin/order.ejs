@@ -39,6 +39,8 @@
       }
     
     </style>
+   <div style="padding-left: 30px; padding-right: 30px;">
+
    
     <div class="container-fluid">
         <div class="row">
@@ -80,7 +82,7 @@
                       <td><%= order.paymentMethod %></td>
                       <td><%= prd.orderstatus %><% if (prd.reason) { %> (<span class="reason-text"><%= prd.reason %></span>) <% } %></td>
 
-                      <form action="/admin/order-details/?orderId=<%=order._id %>&productId=<%= prd.item._id %>" method="post">
+                      <form action="/admin/order-details/<%=order._id %>&<%= prd.item._id %>" method="post">
                         <td>
                           <select name="deliveryStatus" <%= (prd.orderstatus === 'cancelled' || order.paymentstatus === 'failed') ? 'disabled' : '' %>>
                             <option value="default"><%= prd.deliverystatus %></option>
@@ -105,7 +107,7 @@
         </div>
       </div>
       
-      
+    </div>
       <script>
         
       function viewDetails(orderId) {

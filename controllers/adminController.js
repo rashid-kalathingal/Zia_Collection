@@ -8,6 +8,7 @@ const XLSX = require("xlsx");
 const { ObjectId } = require("mongodb");
 const jsPDF = require("jspdf");
 const PDFDocument = require("pdfkit");
+const Wallet = require("../models/walletSchema");
 
 //checking user data with existing data
 exports.postLogin = async (req, res) => {
@@ -38,9 +39,96 @@ exports.postLogin = async (req, res) => {
 //   res.render('admin/user',{noShow:true});
 // };
 
-exports.dashboard = function (req, res, next) {
-  res.render("admin/dashboard", { noShow: true });
+exports.dashboard = async (req, res, next) => {
+  let adminDetails = req.session.admin;
+  const orders = await Order.find({})
+    .populate({
+      path: "products.item",
+      model: "Product",
+    })
+    .exec();
+console.log(orders,"bvbnbvb");
+  const totalQuantity = orders.reduce((accumulator, order) => {
+    order.products.forEach((product) => {
+      accumulator += product.quantity;
+    });
+    return accumulator;
+  }, 0);
+
+  const totalProfit = orders.reduce((acc, order) => {
+    return acc + order.totalAmount;
+  }, 0);
+
+  const totalShipped = orders.reduce((accumulator, order) => {
+    order.products.forEach((product) => {
+      if (product.deliverystatus === "shipped") {
+        accumulator += 1;
+      }
+    });
+    return accumulator;
+  }, 0);
+  const totalCancelled = orders.reduce((accumulator, order) => {
+    order.products.forEach((product) => {
+      if (product.orderstatus === "cancelled") {
+        accumulator += 1;
+      }
+    });
+    return accumulator;
+  }, 0);
+
+  console.log(orders, "order details");
+
+  const startOfYear = new Date(new Date().getFullYear(), 0, 1); // start of the year
+  const endOfYear = new Date(new Date().getFullYear(), 11, 31); // end of the year
+
+  let orderBasedOnMonths = await Order.aggregate([
+    // match orders within the current year
+    { $match: { createdAt: { $gte: startOfYear, $lte: endOfYear } } },
+
+    // group orders by month
+    {
+      $group: {
+        _id: { $month: "$createdAt" },
+        orders: { $push: "$$ROOT" },
+      },
+    },
+
+    // project the month and orders fields
+    {
+      $project: {
+        _id: 0,
+        month: "$_id",
+        orders: 1,
+      },
+    },
+    {
+      $project: {
+        month: 1,
+        orderCount: { $size: "$orders" },
+      },
+    },
+    {
+      $sort: { month: 1 },
+    },
+  ]);
+
+  console.log(orderBasedOnMonths, "vall");
+  order_count = orderBasedOnMonths[0]['orderCount']
+  console.log(order_count);
+   console.log(totalQuantity,totalProfit,totalShipped,totalCancelled,'ordercount')
+  res.render("admin/dashboard", {
+    admin: true,
+    adminDetails,
+    totalQuantity,
+    order_count,
+    totalProfit,
+    totalShipped,
+    totalCancelled,
+    orderBasedOnMonths,
+    noShow: true,
+  });
 };
+
 exports.banner = function (req, res, next) {
   res.render("admin/banner", { noShow: true });
 };
@@ -106,47 +194,88 @@ exports.Orders = async (req, res) => {
     console.log(error);
   }
 };
-//deatil of order shown in admin page
+
 exports.orderDetailsAdmin = async (req, res) => {
-  console.log(req.body, "selected ");
+  try {
+    const idString = String(req.params.id);
+    const [orderId, productId] = idString.split("&");
+    console.log(orderId, "Order ID");
+    console.log(productId, "Product ID");
 
-  let productId = req.query.productId;
-  let orderId = req.query.orderId;
+    const deliveryStatus = req.body.deliveryStatus;
 
-  const deliveryStatus = req.body.deliveryStatus;
+    let orders = await Order.find({ _id: orderId })
+      .populate({
+        path: "products.item",
+        model: "Product",
+      })
+      .exec();
 
-  let orders = await Order.find({ _id: orderId })
-    .populate({
-      path: "products.item",
-      model: "Product",
-    })
-    .exec();
+    for (let i = 0; i < orders.length; i++) {
+      let order = orders[i];
+      let product = order.products.find(
+        (product) => product.item._id.toString() === productId
+      );
+      console.log(product, "Product found");
 
-  console.log(orders, "ord");
+      console.log(order.paymentMethod, "1");
+      console.log(product.deliverystatus, "2");
+      console.log(product.orderstatus, "3");
+      console.log(product.currentPrice, "4");
 
-  let product = null;
-  for (let i = 0; i < orders.length; i++) {
-    let order = orders[i];
-    product = order.products.find(
-      (product) => product.item._id.toString() === productId
-    );
-    console.log(product, "products found");
-    if (product) {
-      if (deliveryStatus == "cancelled") {
-        product.orderstatus = deliveryStatus;
-        product.deliverystatus = deliveryStatus;
-      } else {
-        product.orderstatus = "confirmed";
-        product.deliverystatus = deliveryStatus;
+      let walletPayment = order.paymentMethod;
+      let walletDelivery = product.deliverystatus;
+      let walletOrderstatus = product.orderstatus;
+      let walletBalance = product.currentPrice;
+
+      if (walletOrderstatus === "cancelled" && walletDelivery === "cancelled") {
+        console.log("innn rashi");
+        if (walletPayment === "RazorPay") {
+          // Add Razorpay amount to wallet balance
+
+          const wallet = await Wallet.findOne({ userId: order.userId });
+          if (wallet) {
+            wallet.balance += walletBalance;
+            await wallet.save();
+            console.log("1234");
+          }
+        }
+      } else if (
+        walletOrderstatus === "returned" ||
+        walletDelivery === "returned"
+      ) {
+        // Add all payment amounts (COD and Razorpay) to wallet balance
+        const wallet = await Wallet.findOne({ userId: order.userId });
+        if (wallet) {
+          order.products.forEach((orderProduct) => {
+            wallet.balance += walletBalance;
+          });
+          await wallet.save();
+          console.log("12345");
+        }
       }
 
-      await order.save();
-      break; // Exit the loop once product is found
-    }
-  }
+      if (product) {
+        if (deliveryStatus === "cancelled") {
+          product.orderstatus = deliveryStatus;
+          product.deliverystatus = deliveryStatus;
+        } else {
+          product.orderstatus = "confirmed";
+          product.deliverystatus = deliveryStatus;
+        }
 
-  res.redirect("/admin/order");
+        await order.save();
+      }
+    }
+
+    res.redirect("/admin/order");
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
 };
+
+
 
 exports.logout = function (req, res) {
   req.session.loggedIn = false;
@@ -178,12 +307,12 @@ exports.undoproduct = async (req, res) => {
 };
 
 exports.salesSummary = async (req, res) => {
-  let adminDetails = req.session.admin;
+  let adminDetails = req.session.AdminloggedIn;
   let orders = await Order.find()
     .populate({
       path: "userId",
       model: "User",
-      select: "name email", // select the fields you want to include from the User document
+      select: "name email",
     })
     .populate({
       path: "products.item",

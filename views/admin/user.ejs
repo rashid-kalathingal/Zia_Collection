@@ -1,3 +1,8 @@
+<head>
+  <!-- Add this inside the <head> tag of your HTML file -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</head>
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
   
 
@@ -34,7 +39,7 @@
       
     
     
-    <section>
+    <section style="padding-left: 30px; padding-right: 30px;">
        
     
             <table class="table table-striped table-dark mt-5" id="myTable">
@@ -103,21 +108,37 @@
 
 
 
-  const blockButtons = document.querySelectorAll('.block-button');
-  blockButtons.forEach(blockButton => {
-    const itemId = blockButton.dataset.id;
-    blockButton.addEventListener('click', () => {
-      const url = blockButton.classList.contains('btn-danger')
-        ? `/admin/block/${itemId}`
-        : `/admin/unBlock/${itemId}`;
-      blockButton.textContent = blockButton.classList.contains('btn-danger')
-        ? 'Unblock'
-        : 'Block';
-      blockButton.classList.toggle('btn-danger');
-      blockButton.classList.toggle('btn-primary');
-      fetch(url).catch(console.error);
+ const blockButtons = document.querySelectorAll('.block-button');
+blockButtons.forEach(blockButton => {
+  const itemId = blockButton.dataset.id;
+  blockButton.addEventListener('click', () => {
+    const url = blockButton.classList.contains('btn-danger')
+      ? `/admin/block/${itemId}`
+      : `/admin/unBlock/${itemId}`;
+    const confirmationText = blockButton.classList.contains('btn-danger')
+      ? 'Are you sure you want to unblock this item?'
+      : 'Are you sure you want to block this item?';
+    
+    Swal.fire({
+      text: confirmationText,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes',
+      cancelButtonText: 'Cancel'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        blockButton.textContent = blockButton.classList.contains('btn-danger')
+          ? 'Unblock'
+          : 'Block';
+        blockButton.classList.toggle('btn-danger');
+        blockButton.classList.toggle('btn-primary');
+        fetch(url).catch(console.error);
+      }
     });
   });
+});
 
 
 

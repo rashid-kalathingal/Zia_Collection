@@ -1,4 +1,8 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
+    <!-- Layout styles -->
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <!-- End layout styles -->
+    <link rel="shortcut icon" href="../../assets/images/favicon.png" />
 <%- include('../admin/partials/head.ejs') -%>
 
 
@@ -6,13 +10,111 @@
 <div class="d-flex" style="display: flex;">
 <div class="hea"><%- include('../admin/partials/nav.ejs') -%></div>
 <div class="heavhgnvbn" style="width: 100%;"><br><br><br><br>
+    <style>
+        .chart-ZIACOLLECTION{
+            height: 400px !important;
+            width: 1200px !important;
+        }
+    </style>
 
 
+    <div class="row">
+        <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-9">
+                  <div class="d-flex align-items-center align-self-start">
+                    <h3 class="mb-0"><%= locals.order_count%></h3>
+                    <p class="text-success ml-2 mb-0 font-weight-medium">+3.5%</p>
+                  </div>
+                </div>
+                <div class="col-3">
+                  <div class="icon icon-box-success ">
+                    <span class="mdi mdi-arrow-top-right icon-item"></span>
+                  </div>
+                </div>
+              </div>
+              <h6 class="text-muted font-weight-normal">Orders</h6>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-9">
+                  <div class="d-flex align-items-center align-self-start">
+                    <h3 class="mb-0"><%= locals.totalShipped %></h3>
+                    <p class="text-success ml-2 mb-0 font-weight-medium">+11%</p>
+                  </div>
+                </div>
+                <div class="col-3">
+                  <div class="icon icon-box-success">
+                    <span class="mdi mdi-arrow-top-right icon-item"></span>
+                  </div>
+                </div>
+              </div>
+              <h6 class="text-muted font-weight-normal">Shipped</h6>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-9">
+                  <div class="d-flex align-items-center align-self-start">
+                    <h3 class="mb-0"><%= locals.totalCancelled %></h3>
+                    <p class="text-danger ml-2 mb-0 font-weight-medium">-2.4%</p>
+                  </div>
+                </div>
+                <div class="col-3">
+                  <div class="icon icon-box-danger">
+                    <span class="mdi mdi-arrow-bottom-left icon-item"></span>
+                  </div>
+                </div>
+              </div>
+              <h6 class="text-muted font-weight-normal">Cancelled</h6>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-9">
+                  <div class="d-flex align-items-center align-self-start">
+                    <h3 class="mb-0">&#8377;<%=locals.totalProfit %></h3>
+                    <p class="text-success ml-2 mb-0 font-weight-medium">+3.5%</p>
+                  </div>
+                </div>
+                <div class="col-3">
+                  <div class="icon icon-box-success ">
+                    <span class="mdi mdi-arrow-top-right icon-item"></span>
+                  </div>
+                </div>
+              </div>
+              <h6 class="text-muted font-weight-normal">Sales</h6>
+            </div>
+          </div>
+        </div>
+      </div>
 
-<h1>dashboard under construction</h1>
+          <div class="card">
+                    <div class="card-body">
+                      <h4 class="card-title">Monthly Orders</h4>
+                      <canvas class="chart-ZIACOLLECTION" id="barChart" style="height:9px;"></canvas>
+            </div>
+          </div>
+        </div>
+
+    
+        
 
 </div>
 </div>
+
 <%- include('../admin/partials/script.ejs') -%>
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
 <script>
@@ -20,3 +122,61 @@
 $('#myTable').DataTable();
 } );
 </script>
+<script>
+      
+    var datas = `<%- JSON.stringify(orderBasedOnMonths) %>`;
+    var parseData = JSON.parse(datas)
+    console.log(parseData, '.iahve asfdsd')
+    document.addEventListener("DOMContentLoaded", function () {
+        // Bar chart
+
+        new Chart(document.getElementById("chartjs-dashboard-bar"), {
+
+            type: "bar",
+            data: {
+                labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                datasets: [{
+                    label: "This year",
+                    backgroundColor: window.theme.primary,
+                    borderColor: window.theme.primary,
+                    hoverBackgroundColor: window.theme.primary,
+                    hoverBorderColor: window.theme.primary,
+                    data: (() => {
+                        const orderCounts = Array.from({ length: 12 }, () => 0);
+                        parseData.forEach((month) => {
+                            orderCounts[month.month - 1] = month.orderCount;
+                        });
+                        return orderCounts;
+                    })(),
+                    barPercentage: .75,
+                    categoryPercentage: .5
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                legend: {
+                    display: false
+                },
+                scales: {
+                    yAxes: [{
+                        gridLines: {
+                            display: false
+                        },
+                        stacked: false,
+                        ticks: {
+                            stepSize: 20
+                        }
+                    }],
+                    xAxes: [{
+                        stacked: false,
+                        gridLines: {
+                            color: "transparent"
+                        }
+                    }]
+                }
+            }
+        });
+    });
+</script>
+    <script src="../../assets/js/chart.js"></script>
+    <!-- End custom js for this page -->
