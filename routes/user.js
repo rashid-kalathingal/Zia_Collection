@@ -52,6 +52,9 @@ router.post("/verifyotpLogin", userauth, userController.verifyMobileOtp);
 router.patch("/verifyMobileOtpwithforget",userauth,userController.verifyMobileOtpwithforget);
 router.post("/mobileexists", userController.mobileVerify);
 router.patch("/resetPassword", userController.resetPassword);
+router.get("/filter-products",userController.filterproducts)
+router.get('/shop/search/suggestions/',userController.search)
+router.get('/search',userController.searching)
 
 //cart
 

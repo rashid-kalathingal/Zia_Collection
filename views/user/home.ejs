@@ -650,7 +650,7 @@
 
 
 
-				<!-- <div class="flex-w flex-c-m m-tb-10">
+				<div class="flex-w flex-c-m m-tb-10">
 					<div class="flex-c-m stext-106 cl6 size-104 bor4 pointer hov-btn3 trans-04 m-r-8 m-tb-4 js-show-filter">
 						<i class="icon-filter cl2 m-r-6 fs-15 trans-04 zmdi zmdi-filter-list"></i>
 						<i class="icon-close-filter cl2 m-r-6 fs-15 trans-04 zmdi zmdi-close dis-none"></i>
@@ -662,19 +662,43 @@
 						<i class="icon-close-search cl2 m-r-6 fs-15 trans-04 zmdi zmdi-close dis-none"></i>
 						Search
 					</div>
-				</div> -->
+				</div>
 				
 				<!-- Search product -->
 				<div class="dis-none panel-search w-full p-t-10 p-b-15">
 					<div class="bor8 dis-flex p-l-15">
-						<button class="size-113 flex-c-m fs-16 cl2 hov-cl1 trans-04">
-							<i class="zmdi zmdi-search"></i>
-						</button>
-
-						<input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="search-product" placeholder="Search">
+					  <button class="size-113 flex-c-m fs-16 cl2 hov-cl1 trans-04" onclick="searchProduct()">
+						<i class="zmdi zmdi-search"></i>
+					  </button>
+					  <input id="search" class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="search-product" placeholder="Search">
 					</div>	
-				</div>
+				  </div>
+				  <ul id="suggestions"></ul>
+				  
+<style>
+	
+#suggestions {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
 
+#suggestions li {
+  background-color: #f2f2f2;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#suggestions li:hover {
+  background-color: #e0e0e0;
+}
+
+
+
+</style>
 				<!-- Filter -->
 				<div class="dis-none panel-filter w-full p-t-10">
 					<div class="wrap-filter flex-w bg6 w-full p-lr-40 p-t-27 p-lr-15-sm">
@@ -729,138 +753,40 @@
 
 							<ul>
 								<li class="p-b-6">
-									<a href="#" class="filter-link stext-106 trans-04 filter-link-active">
-										All
-									</a>
+								  <a href="#" class="filter-link stext-106 trans-04 filter-link-active" data-min-price="0" data-max-price="10000">
+									All
+								  </a>
 								</li>
-
 								<li class="p-b-6">
-									<a href="#" class="filter-link stext-106 trans-04">
-										$0.00 - $50.00
-									</a>
+								  <a href="#" class="filter-link stext-106 trans-04" data-min-price="0" data-max-price="5000">
+									₹0.00 - ₹5000.00
+								  </a>
 								</li>
-
 								<li class="p-b-6">
-									<a href="#" class="filter-link stext-106 trans-04">
-										$50.00 - $100.00
-									</a>
+								  <a href="#" class="filter-link stext-106 trans-04" data-min-price="5000" data-max-price="6000">
+									₹5000.00 - ₹6000.00
+								  </a>
 								</li>
-
 								<li class="p-b-6">
-									<a href="#" class="filter-link stext-106 trans-04">
-										$100.00 - $150.00
-									</a>
+								  <a href="#" class="filter-link stext-106 trans-04" data-min-price="6000" data-max-price="7000">
+									₹6000.00 - ₹7000.00
+								  </a>
 								</li>
-
 								<li class="p-b-6">
-									<a href="#" class="filter-link stext-106 trans-04">
-										$150.00 - $200.00
-									</a>
+								  <a href="#" class="filter-link stext-106 trans-04" data-min-price="7000" data-max-price="8000">
+									₹7000.00 - ₹8000.00
+								  </a>
 								</li>
-
 								<li class="p-b-6">
-									<a href="#" class="filter-link stext-106 trans-04">
-										$200.00+
-									</a>
+								  <a href="#" class="filter-link stext-106 trans-04" data-min-price="8000" data-max-price="999999">
+									₹8000.00+
+								  </a>
 								</li>
-							</ul>
+							  </ul>
+							  
 						</div>
 
-						<div class="filter-col3 p-r-15 p-b-27">
-							<div class="mtext-102 cl2 p-b-15">
-								Color
-							</div>
-
-							<ul>
-								<li class="p-b-6">
-									<span class="fs-15 lh-12 m-r-6" style="color: #222;">
-										<i class="zmdi zmdi-circle"></i>
-									</span>
-
-									<a href="#" class="filter-link stext-106 trans-04">
-										Black
-									</a>
-								</li>
-
-								<li class="p-b-6">
-									<span class="fs-15 lh-12 m-r-6" style="color: #4272d7;">
-										<i class="zmdi zmdi-circle"></i>
-									</span>
-
-									<a href="#" class="filter-link stext-106 trans-04 filter-link-active">
-										Blue
-									</a>
-								</li>
-
-								<li class="p-b-6">
-									<span class="fs-15 lh-12 m-r-6" style="color: #b3b3b3;">
-										<i class="zmdi zmdi-circle"></i>
-									</span>
-
-									<a href="#" class="filter-link stext-106 trans-04">
-										Grey
-									</a>
-								</li>
-
-								<li class="p-b-6">
-									<span class="fs-15 lh-12 m-r-6" style="color: #00ad5f;">
-										<i class="zmdi zmdi-circle"></i>
-									</span>
-
-									<a href="#" class="filter-link stext-106 trans-04">
-										Green
-									</a>
-								</li>
-
-								<li class="p-b-6">
-									<span class="fs-15 lh-12 m-r-6" style="color: #fa4251;">
-										<i class="zmdi zmdi-circle"></i>
-									</span>
-
-									<a href="#" class="filter-link stext-106 trans-04">
-										Red
-									</a>
-								</li>
-
-								<li class="p-b-6">
-									<span class="fs-15 lh-12 m-r-6" style="color: #aaa;">
-										<i class="zmdi zmdi-circle-o"></i>
-									</span>
-
-									<a href="#" class="filter-link stext-106 trans-04">
-										White
-									</a>
-								</li>
-							</ul>
-						</div>
-
-						<div class="filter-col4 p-b-27">
-							<div class="mtext-102 cl2 p-b-15">
-								Tags
-							</div>
-
-							<div class="flex-w p-t-4 m-r--5">
-								<a href="#" class="flex-c-m stext-107 cl6 size-301 bor7 p-lr-15 hov-tag1 trans-04 m-r-5 m-b-5">
-									Fashion
-								</a>
-
-								<a href="#" class="flex-c-m stext-107 cl6 size-301 bor7 p-lr-15 hov-tag1 trans-04 m-r-5 m-b-5">
-									Lifestyle
-								</a>
-
-								<a href="#" class="flex-c-m stext-107 cl6 size-301 bor7 p-lr-15 hov-tag1 trans-04 m-r-5 m-b-5">
-									Denim
-								</a>
-
-								<a href="#" class="flex-c-m stext-107 cl6 size-301 bor7 p-lr-15 hov-tag1 trans-04 m-r-5 m-b-5">
-									Streetstyle
-								</a>
-
-								<a href="#" class="flex-c-m stext-107 cl6 size-301 bor7 p-lr-15 hov-tag1 trans-04 m-r-5 m-b-5">
-									Crafts
-								</a>
-							</div>
-						</div>
+					
 					</div>
 				</div>
 			</div>
@@ -868,7 +794,7 @@
 
 
 
-			<div class="row isotope-grid">
+			<div id="product-container" class="row isotope-grid">
 				
 			<%for(i=0;i<products.length;i++){%>
 				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
@@ -1366,8 +1292,182 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 	}
 
 
-	
+// Function to handle the onclick event of filter-link elements
+function handleFilterClick(event) {
+  event.preventDefault();
+
+  // Get the minimum and maximum price values from data attributes
+  var minPrice = parseFloat(this.getAttribute("data-min-price"));
+  var maxPrice = parseFloat(this.getAttribute("data-max-price"));
+
+  // Send AJAX request to the server
+  var url = "/filter-products"; // Replace with the actual server-side endpoint
+  var params = "minPrice=" + minPrice + "&maxPrice=" + maxPrice;
+
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", url + "?" + params, true);
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState === 4 && xhr.status === 200) {
+      var filteredProducts = JSON.parse(xhr.responseText);
+      console.log("Filtered Products:", filteredProducts);
+      updateProducts(filteredProducts);
+    }
+  };
+  xhr.send();
+}
+
+// Function to update the page content with the filtered products
+function updateProducts(products) {
+  var productContainer = document.getElementById("product-container");
+  
+  // Check if the product container element exists
+  if (!productContainer) {
+    console.error("Product container element not found");
+    return;
+  }
+  
+  // Clear previous content
+  productContainer.innerHTML = "";
+  
+  // Iterate over the filtered products and create HTML elements to display them
+  for (var i = 0; i < products.length; i++) {
+    var product = products[i];
+    var productElement = document.createElement("div");
+    productElement.classList.add("col-sm-6", "col-md-4", "col-lg-3", "p-b-35", "isotope-item", "women");
+    
+    // Build the HTML structure for each product item
+    productElement.innerHTML = `
+      <div class="block2">
+        <div class="block2-pic hov-img0">
+          <img src="/uploads/${product.images[0]}" alt="IMG-PRODUCT">
+          <a href="/oneproduct/${product.id}" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04">
+            Quick View
+          </a>
+        </div>
+        <div class="block2-txt flex-w flex-t p-t-14">
+          <div class="block2-txt-child1 flex-col-l">
+            <a href="/product-detail" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+              ${product.name}
+            </a>
+            <span class="stext-105 cl3">
+              ₹${product.price}
+            </span>
+          </div>
+          <div type="button" onclick="addToWishList('${product._id}')" class="block2-txt-child2 flex-r p-t-3">
+            <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
+              <img class="icon-heart1 dis-block trans-04" src="/images/icons/icon-heart-01.png" alt="ICON">
+              <img class="icon-heart2 dis-block trans-04 ab-t-l" src="/images/icons/icon-heart-02.png" alt="ICON">
+            </a>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    // Append the product element to the container
+    productContainer.appendChild(productElement);
+  }
+}
+
+// Attach click event listener to filter-link elements
+var filterLinks = document.querySelectorAll(".filter-link");
+for (var i = 0; i < filterLinks.length; i++) {
+  filterLinks[i].addEventListener("click", handleFilterClick);
+}
 		</script>
+
+
+
+<script>
+	//suggesions in search
+$(document).ready(function() {
+    $('#search').on('keyup', function() {
+        var query = $(this).val();
+        console.log(query);
+        if (query.length < 1) {
+            $('#suggestions').empty();
+            return;
+        }
+        $.getJSON('/shop/search/suggestions/', { q: query }, function(data) {
+            var suggestions = data.suggestions;
+            
+            $('#suggestions').empty();
+            
+            suggestions.forEach(function(suggestion) {
+                var li = $('<li>').addClass('suggestion-item').text(suggestion);
+                li.click(function() {
+                    $('#search').val(suggestion);
+                    $('#suggestions').empty();
+                    
+                });
+                $('#suggestions').append(li);
+            });
+        });
+    });
+});
+	</script>
+
+<script>
+	function searchProduct() {
+  // Get the search query from the input field
+  var searchQuery = document.getElementById("search").value;
+
+  // Create a new XMLHttpRequest object
+  var xhr = new XMLHttpRequest();
+
+  // Configure the request
+  xhr.open("GET", "/search?query=" + encodeURIComponent(searchQuery), true);
+
+  // Set the callback function
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState === 4 && xhr.status === 200) {
+      // Process the response from the back-end script
+      var response = JSON.parse(xhr.responseText);
+      updateProductContainer(response);
+    }
+  };
+
+  // Send the request
+  xhr.send();
+}
+
+function updateProductContainer(products) {
+  var productContainer = document.getElementById("product-container");
+  productContainer.innerHTML = "";
+
+  products.forEach(function (product) {
+    var div = document.createElement("div");
+    div.className = "col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women";
+    div.innerHTML = `
+      <div class="block2">
+        <div class="block2-pic hov-img0">
+          <img src="/uploads/${product.images[0]}" alt="IMG-PRODUCT">
+          <a href="/oneproduct/${product.id}" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 ">
+            Quick View
+          </a>
+        </div>
+        <div class="block2-txt flex-w flex-t p-t-14">
+          <div class="block2-txt-child1 flex-col-l">
+            <a href="/product-detail" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+              ${product.name}
+            </a>
+            <span class="stext-105 cl3">
+              ₹${product.price}
+            </span>
+          </div>
+          <div type="button" onclick="addToWishList('${product._id}')" class="block2-txt-child2 flex-r p-t-3">
+            <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
+              <img class="icon-heart1 dis-block trans-04" src="/images/icons/icon-heart-01.png" alt="ICON">
+              <img class="icon-heart2 dis-block trans-04 ab-t-l" src="/images/icons/icon-heart-02.png" alt="ICON">
+            </a>
+          </div>
+        </div>
+      </div>
+    `;
+    productContainer.appendChild(div);
+  });
+}
+
+</script>
 			<script>
 				$(document).ready(function() {
 				  $('.carousel').carousel();

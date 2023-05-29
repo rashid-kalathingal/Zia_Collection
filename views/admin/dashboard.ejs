@@ -101,6 +101,27 @@
         </div>
       </div>
 
+
+
+      <div class="row">
+        <div class="col-lg-6 grid-margin stretch-card"  >
+          <div class="card" style="width: 450px; height: 450px;">
+            <div class="card-body" >
+              <h4 class="card-title">Sales-category</h4>
+              <canvas id="pieChart" ></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6 grid-margin stretch-card">
+          <div class="card" style="width: 450px; height: 450px;">
+            <div class="card-body">
+              <h4 class="card-title">payment-method</h4>
+              <canvas id="myChart" ></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
           <div class="card">
                     <div class="card-body">
                       <h4 class="card-title">Monthly Orders</h4>
@@ -108,9 +129,6 @@
             </div>
           </div>
         </div>
-
-    
-        
 
 </div>
 </div>
@@ -122,8 +140,8 @@
 $('#myTable').DataTable();
 } );
 </script>
-<script>
-      
+
+<script>      
     var datas = `<%- JSON.stringify(orderBasedOnMonths) %>`;
     var parseData = JSON.parse(datas)
     console.log(parseData, '.iahve asfdsd')
@@ -178,5 +196,108 @@ $('#myTable').DataTable();
         });
     });
 </script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  var percentagePayment = `<%- JSON.stringify(paymentPercentages) %>`;
+  var percentagePaymentData = JSON.parse(percentagePayment);
+
+  var method1 = Object.keys(percentagePaymentData)[0];
+  var method1Data = parseFloat(percentagePaymentData[method1]);
+  var method2 = Object.keys(percentagePaymentData)[1];
+  var method2Data = parseFloat(percentagePaymentData[method2]);
+  var method3 = Object.keys(percentagePaymentData)[2];
+  var method3Data = parseFloat(percentagePaymentData[method3]);
+
+  const ctx = document.getElementById('myChart');
+  const data = {
+    labels: [
+      method1,
+      method2,
+      method3
+    ],
+    datasets: [{
+      label: 'Payment Method',
+      data: [method1Data, method2Data, method3Data],
+      backgroundColor: [
+        'rgb(255, 99, 132)',
+        'rgb(54, 162, 235)',
+        'rgb(255, 205, 86)'
+      ],
+      hoverOffset: 4
+    }]
+  };
+
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: data,
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+</script>
+
+<script>
+  var categorylist = `<%- JSON.stringify(categoryCounts) %>`;
+  var categorylistData = JSON.parse(categorylist);
+
+  let labels = [];
+  let dataz = [];
+
+  let index = 1;
+  for (const key in categorylistData) {
+    const category = key;
+    const categoryData = categorylistData[key];
+    const variableName = `category${index}`;
+    const variableDataName = `${variableName}Data`;
+    console.log(`${variableName}=${category}`);
+     console.log(`${variableDataName}=${categoryData}`);
+
+    labels.push(category);
+    dataz.push(categoryData);
+
+    index++;
+  }
+console.log(labels,"bbbbbbbbbbb");
+  const xzx = document.getElementById('pieChart');
+  const data2 = {
+    labels: labels,
+    datasets: [
+      {
+        label: 'My First Dataset',
+        data: dataz,
+        backgroundColor: [
+          'rgb(255, 99, 132)',
+          'rgb(54, 162, 235)',
+          'rgb(255, 205, 86)'
+          // Add more colors if needed
+        ],
+        hoverOffset: 4
+      }
+    ]
+  };
+  new Chart(xzx, {
+    type: 'pie',
+    data: data2,
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+</script>
+
+
+
+
     <script src="../../assets/js/chart.js"></script>
     <!-- End custom js for this page -->

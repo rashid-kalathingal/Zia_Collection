@@ -93,41 +93,88 @@ $(function() {
   };
 
   
-  // var doughnutPieData = {
-  //   datasets: [{
-  //     data: [30, 40, 30],
-  //     backgroundColor: [
-  //       'rgba(255, 99, 132, 0.5)',
-  //       'rgba(54, 162, 235, 0.5)',
-  //       'rgba(255, 206, 86, 0.5)',
-  //       'rgba(75, 192, 192, 0.5)',
-  //       'rgba(153, 102, 255, 0.5)',
-  //       'rgba(255, 159, 64, 0.5)'
-  //     ],
-  //     borderColor: [
-  //       'rgba(255,99,132,1)',
-  //       'rgba(54, 162, 235, 1)',
-  //       'rgba(255, 206, 86, 1)',
-  //       'rgba(75, 192, 192, 1)',
-  //       'rgba(153, 102, 255, 1)',
-  //       'rgba(255, 159, 64, 1)'
-  //     ],
-  //   }],
+  var PieData = {
+    datasets: [{
+      data: [30, 30, 10,30],
+      backgroundColor: [
+        'rgba(255, 99, 132, 0.5)',
+        'rgba(54, 162, 235, 0.5)',
+        'rgba(255, 206, 86, 0.5)',
+        'rgba(75, 192, 192, 0.5)',
+        'rgba(153, 102, 255, 0.5)',
+        'rgba(255, 159, 64, 0.5)'
+      ],
+      borderColor: [
+        'rgba(255,99,132,1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(153, 102, 255, 1)',
+        'rgba(255, 159, 64, 1)'
+      ],
+    }],
 
-  //   // These labels appear in the legend and in the tooltips when hovering different arcs
-  //   labels: [
-  //     'Pink',
-  //     'Blue',
-  //     'Yellow',
-  //   ]
-  // };
-  // var doughnutPieOptions = {
-  //   responsive: true,
-  //   animation: {
-  //     animateScale: true,
-  //     animateRotate: true
-  //   }
-  // };
+    // These labels appear in the legend and in the tooltips when hovering different arcs
+    labels: [
+      'Pink',
+      'Blue',
+      'Yellow',
+      "hyva"
+    ]
+  };
+  var doughnutPieOptions = {
+    responsive: true,
+    animation: {
+      animateScale: true,
+      animateRotate: true
+    }
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+  var doughnutData = {
+    datasets: [{
+      data: [10, 30, 10,30,20],
+      backgroundColor: [
+        'rgba(255, 99, 132, 0.5)',
+        'rgba(54, 162, 235, 0.5)',
+        'rgba(255, 206, 86, 0.5)',
+        'rgba(75, 192, 192, 0.5)',
+        'rgba(153, 102, 255, 0.5)',
+        'rgba(255, 159, 64, 0.5)'
+      ],
+      borderColor: [
+        'rgba(255,99,132,1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(153, 102, 255, 1)',
+        'rgba(255, 159, 64, 1)'
+      ],
+    }],
+
+    // These labels appear in the legend and in the tooltips when hovering different arcs
+    labels: [
+      'Pink',
+      'Blue',
+      'Yellow',
+      "kiduski"
+    ]
+  };
+
+
+
+
+
   // var areaData = {
   //   labels: ["2013", "2014", "2015", "2016", "2017"],
   //   datasets: [{
@@ -340,23 +387,23 @@ $(function() {
 //     });
 //   }
 
-//   if ($("#doughnutChart").length) {
-//     var doughnutChartCanvas = $("#doughnutChart").get(0).getContext("2d");
-//     var doughnutChart = new Chart(doughnutChartCanvas, {
-//       type: 'doughnut',
-//       data: doughnutPieData,
-//       options: doughnutPieOptions
-//     });
-//   }
+  if ($("#doughnutChart").length) {
+    var doughnutChartCanvas = $("#doughnutChart").get(0).getContext("2d");
+    var doughnutChart = new Chart(doughnutChartCanvas, {
+      type: 'doughnut',
+      data: doughnutData,
+      options: doughnutPieOptions
+    });
+  }
 
-//   if ($("#pieChart").length) {
-//     var pieChartCanvas = $("#pieChart").get(0).getContext("2d");
-//     var pieChart = new Chart(pieChartCanvas, {
-//       type: 'pie',
-//       data: doughnutPieData,
-//       options: doughnutPieOptions
-//     });
-//   }
+  if ($("#pieChart").length) {
+    var pieChartCanvas = $("#pieChart").get(0).getContext("2d");
+    var pieChart = new Chart(pieChartCanvas, {
+      type: 'pie',
+      data: PieData,
+      options: doughnutPieOptions
+    });
+  }
 
 //   if ($("#areaChart").length) {
 //     var areaChartCanvas = $("#areaChart").get(0).getContext("2d");
@@ -367,14 +414,14 @@ $(function() {
 //     });
 //   }
 
-//   if ($("#scatterChart").length) {
-//     var scatterChartCanvas = $("#scatterChart").get(0).getContext("2d");
-//     var scatterChart = new Chart(scatterChartCanvas, {
-//       type: 'scatter',
-//       data: scatterChartData,
-//       options: scatterChartOptions
-//     });
-//   }
+  // if ($("#scatterChart").length) {
+  //   var scatterChartCanvas = $("#scatterChart").get(0).getContext("2d");
+  //   var scatterChart = new Chart(scatterChartCanvas, {
+  //     type: 'scatter',
+  //     data: scatterChartData,
+  //     options: scatterChartOptions
+  //   });
+  // }
 
 //   if ($("#browserTrafficChart").length) {
 //     var doughnutChartCanvas = $("#browserTrafficChart").get(0).getContext("2d");

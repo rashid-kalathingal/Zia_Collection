@@ -9,6 +9,7 @@ const { ObjectId } = require("mongodb");
 const jsPDF = require("jspdf");
 const PDFDocument = require("pdfkit");
 const Wallet = require("../models/walletSchema");
+const { returnOrder } = require("./orderController");
 
 //checking user data with existing data
 exports.postLogin = async (req, res) => {
@@ -47,7 +48,7 @@ exports.dashboard = async (req, res, next) => {
       model: "Product",
     })
     .exec();
-console.log(orders,"bvbnbvb");
+
   const totalQuantity = orders.reduce((accumulator, order) => {
     order.products.forEach((product) => {
       accumulator += product.quantity;
@@ -76,7 +77,117 @@ console.log(orders,"bvbnbvb");
     return accumulator;
   }, 0);
 
-  console.log(orders, "order details");
+ 
+  //console.log(orders.products,"zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
+
+
+ 
+
+  const categoryCounts = await (async () => {
+    try {
+      // Retrieve all orders
+      console.log(orders, "order details");
+  
+      // Object to store category names and their respective count
+      const categoryCount = {};
+  
+      // Iterate over the orders
+      for (const order of orders) {
+        // Iterate over the products within each order
+        for (const product of order.products) {
+          // Retrieve the category from the "item" field
+          const categoryId = product.item.category;
+  
+          // Populate the category field with actual category data
+          const category = await Category.findById(categoryId).exec();
+  
+          // Increment the category count
+          if (category) {
+            const categoryName = category.category;
+  
+            if (categoryCount[categoryName]) {
+              categoryCount[categoryName].count++;
+            } else {
+              categoryCount[categoryName] = {
+                name: categoryName,
+                count: 1,
+              };
+            }
+          }
+        }
+      }
+  
+      // Object to store category names and their respective count
+      const categoryCounts = {};
+  
+      // Output the category names and counts
+      for (const categoryName in categoryCount) {
+        const categoryData = categoryCount[categoryName];
+        console.log(`Category: ${categoryData.name}, Count: ${categoryData.count}`);
+        categoryCounts[categoryData.name] = categoryData.count;
+      }
+  
+      console.log(categoryCounts);
+  
+      // Return the categoryCounts object
+      return categoryCounts;
+    } catch (error) {
+      console.error(error);
+    }
+  })();
+  
+  
+  
+     console.log(categoryCounts,"cxcxccxcxccxccxcxc");
+
+
+
+
+  function countPaymentMethods(orders) {
+    let paymentCounts = {
+      RazorPay: 0,
+      COD: 0,
+      Wallet: 0,
+    };
+
+    for (let order of orders) {
+      const paymentMethod = order.paymentMethod;
+
+      switch (paymentMethod) {
+        case "RazorPay":
+          paymentCounts.RazorPay++;
+          break;
+        case "COD":
+          paymentCounts.COD++;
+          break;
+        case "Wallet":
+          paymentCounts.Wallet++;
+          break;
+      }
+    }
+
+    return paymentCounts;
+  }
+
+  function calculatePaymentMethodPercentage(orders) {
+    let paymentCounts = countPaymentMethods(orders);
+    let totalOrders = orders.length;
+
+    let paymentPercentages = {};
+
+    for (let paymentMethod in paymentCounts) {
+      let count = paymentCounts[paymentMethod];
+      let percentage = (count / totalOrders) * 100;
+      paymentPercentages[paymentMethod] = percentage.toFixed(2) + "%";
+    }
+
+    return paymentPercentages;
+  }
+
+  const paymentPercentages = calculatePaymentMethodPercentage(orders);
+  console.log(paymentPercentages);
+
+  //console.log(totPayment,"xxxxxxxxxxxx");
 
   const startOfYear = new Date(new Date().getFullYear(), 0, 1); // start of the year
   const endOfYear = new Date(new Date().getFullYear(), 11, 31); // end of the year
@@ -112,10 +223,10 @@ console.log(orders,"bvbnbvb");
     },
   ]);
 
-  console.log(orderBasedOnMonths, "vall");
-  order_count = orderBasedOnMonths[0]['orderCount']
-  console.log(order_count);
-   console.log(totalQuantity,totalProfit,totalShipped,totalCancelled,'ordercount')
+  // console.log(orderBasedOnMonths, "vall");
+  order_count = orderBasedOnMonths[0]["orderCount"];
+  // console.log(order_count);
+  //  console.log(totalQuantity,totalProfit,totalShipped,totalCancelled,'ordercount')
   res.render("admin/dashboard", {
     admin: true,
     adminDetails,
@@ -126,6 +237,8 @@ console.log(orders,"bvbnbvb");
     totalCancelled,
     orderBasedOnMonths,
     noShow: true,
+    paymentPercentages,
+    categoryCounts,
   });
 };
 
@@ -274,8 +387,6 @@ exports.orderDetailsAdmin = async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 };
-
-
 
 exports.logout = function (req, res) {
   req.session.loggedIn = false;

@@ -499,3 +499,62 @@ exports.resetPassword = async (req, res, next) => {
       });
   }
 };
+
+exports.filterproducts = async function (req, res) {
+  try {
+    var minPrice = parseFloat(req.query.minPrice);
+    var maxPrice = parseFloat(req.query.maxPrice);
+
+    var productsQuery = { deleted: false };
+
+    if (minPrice && maxPrice) {
+      productsQuery.price = { $gte: minPrice, $lte: maxPrice };
+    }
+
+    const filteredProducts = await Product.find(productsQuery);
+
+    // Return the filtered products as a JSON response
+    res.setHeader("Content-Type", "application/json");
+    res.send(JSON.stringify(filteredProducts));
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+exports.search = async (req, res) => {
+  try {
+    const query = req.query.q || '';
+    if (query.length < 2) {
+      res.json({ suggestions: [] });
+      return;
+    }
+
+    // Perform the search using the query parameter
+    const suggestions = await Product.find({ name: { $regex: query, $options: 'i' } }).limit(10);
+
+    // Return a JSON response with the search suggestions
+    res.json({ suggestions: suggestions.map((product) => product.name) });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while retrieving search suggestions.' });
+  }
+};
+
+exports.searching = async (req, res) => {
+  try {
+    // Get the search query from the request
+    const query = req.query.query;
+
+    // Perform the search operation (e.g., querying a database)
+    const searchProducts = await Product.find({ name:query });
+console.log(searchProducts,"done");
+    // Return the results as JSON
+    res.json(searchProducts);
+    console.log("sended");
+  } catch (error) {
+    // Handle any errors that occurred during the search
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred during the search.' });
+  }
+};
