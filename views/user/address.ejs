@@ -231,12 +231,8 @@
                         <span>  ₹<%= total[0].totalTax %></span>
                       </p>
                       <p class="d-flex">
-                        <span>Discount Coupon    : </span>
-                        <% if (locals.discountAmount) { %>
-                          <span id="couponDiscount">  ₹ <%= locals.discountAmount %></span>
-                        <% } else { %>
-                          <span id="couponDiscount">   No Coupon</span>
-                        <% } %>
+                        <span>Discount Coupon: </span>
+                          <span id="couponDiscount"  >  ₹ <%= locals.discountAmount %></span>
                       </p>
                       <hr>
                       <p class="d-flex total-price">
@@ -360,6 +356,7 @@
       const termsMessage = document.getElementById("terms-message");
   
       placeOrderButton.addEventListener("click", function (event) {
+        const couponAmount = document.getElementById('couponDiscount')
         if (!termsCheckbox.checked) {
           event.preventDefault();
           termsMessage.style.display = "block";
@@ -387,13 +384,21 @@
           });
         }
       })
+
+
   
       $("#checkout-form").submit((e) => {
         e.preventDefault();
+        const couponAmount = $("#couponDiscount").text().trim();
+      console.log(couponAmount,"xxxxxxxxxxxxxxxxxxxxxxxxxxx");
+        const formData = $('#checkout-form').serializeArray();
+      formData.push({ name: 'couponAmount', value: couponAmount });
+
         $.ajax({
           url: '/address',
           method: 'post',
-          data: $('#checkout-form').serialize(),
+          data: formData,
+          // data: $('#checkout-form').serialize(),
           success: (response) => {
          //   alert(response);
            // console.log("alsdfljalsdfsadfkljsadfjlk")

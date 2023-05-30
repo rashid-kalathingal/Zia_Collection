@@ -15,10 +15,14 @@ var instance = new Razorpay({
 //create or add address
 exports.deliveryAddressPost = async (req, res) => {
   let orders = req.body;
-  console.log(orders);
+  console.log(orders,"xxxxxxxxxxxx");
   let cod = req.body["payment-method"];
   console.log(cod);
-
+  // const couponAmount = req.body.couponAmount;
+  // console.log( couponAmount,"gggggggggggggggggggggggggggggggg");
+  let myCoupon=req.body.couponAmount
+  console.log(myCoupon,"xxxxxxxxxxxxxzzzzzzzzzzz");
+  myCoupon = myCoupon.replace("₹", "");
   let addressId = new mongoose.Types.ObjectId(req.body.address);
 
   console.log(addressId);
@@ -104,27 +108,58 @@ exports.deliveryAddressPost = async (req, res) => {
     });
     console.log(orderObj);
     let orderDoc = await Order.create(orderObj);
-    console.log(orderDoc, "order createad");
+    
     let orderId = orderDoc._id;
     let orderIdString = orderId.toString();
     console.log(orderIdString, "order string");
+
+
+    let totTax = 0;
+    for (const product of orderDoc.products) {
+      totTax += product.tax * product.quantity;
+    }
+    console.log('Total Tax:', totTax);
+    
+    let totprice = 0;
+    for (const product of orderDoc.products) {
+      totprice += product.currentPrice* product.quantity;
+    }
+    console.log('Total amount:', totprice);
+    
+
+
+
+
     // Find and delete the cart items for the user
     await Cart.findOneAndDelete({ userId: cart.userId });
     let walletItems = await Wallet.findOne({ userId });
     let balance = walletItems.balance;
     if (req.body["payment-method"] == "COD") {
       res.json({ codSuccess: true });
+
     } else if (req.body["payment-method"] == "RazorPay") {
-      console.log(orderDoc._id, "iddd of order");
+
+    if(myCoupon){
       var options = {
-        amount: orderDoc.totalAmount * 100, // amount in the smallest currency unit
+        amount: ((totprice + totTax)-myCoupon) * 100, // amount in the smallest currency unit
         currency: "INR",
         receipt: orderIdString,
       };
+    }else{
+      var options = {
+        amount: (totprice + totTax) * 100, // amount in the smallest currency unit
+        currency: "INR",
+        receipt: orderIdString,
+      };
+    }
+
+    
+
       instance.orders.create(options, function (err, order) {
         console.log(order, "new order");
         res.json(order);
       });
+
     } else if (req.body["payment-method"] == "Wallet") {
       console.log(orderDoc._id, "iddd of order");
     console.log(balance,"ooooooooooooooooo");
