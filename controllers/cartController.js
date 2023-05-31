@@ -218,7 +218,7 @@ exports.getCartProducts = async (req, res) => {
 
       const cartCount = req.cartCount;
       if (cartItems.length === 0) {
-        res.render("user/emptyCart", {
+        res.render("user/emptycart", {
           cartCount,
           userloggedIn: req.session.userloggedIn,
         });
