@@ -223,7 +223,7 @@ exports.getCartProducts = async (req, res) => {
           userloggedIn: req.session.userloggedIn,
         });
       } else {
-        res.render("user/Cart", {
+        res.render("user/cart", {
           cartItems,
           user,
           cartCount,
