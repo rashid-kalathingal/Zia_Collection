@@ -302,7 +302,7 @@ exports.Orders = async (req, res) => {
 
     //console.log(orders,"all orders");
 
-    res.render("admin/Order", { noShow: true });
+    res.render("admin/order", { noShow: true });
   } catch (error) {
     console.log(error);
   }
@@ -323,7 +323,7 @@ exports.orderDetailsAdmin = async (req, res) => {
         model: "Product",
       })
       .exec();
-
+     
     for (let i = 0; i < orders.length; i++) {
       let order = orders[i];
       let product = order.products.find(
@@ -335,22 +335,32 @@ exports.orderDetailsAdmin = async (req, res) => {
       console.log(product.deliverystatus, "2");
       console.log(product.orderstatus, "3");
       console.log(product.currentPrice, "4");
+      console.log(product.reason,"5");
 
       let walletPayment = order.paymentMethod;
       let walletDelivery = product.deliverystatus;
       let walletOrderstatus = product.orderstatus;
       let walletBalance = product.currentPrice;
+      let reason=product.reason;
 
       if (walletOrderstatus === "cancelled" && walletDelivery === "cancelled") {
-        console.log("innn rashi");
+        
         if (walletPayment === "RazorPay") {
           // Add Razorpay amount to wallet balance
 
           const wallet = await Wallet.findOne({ userId: order.userId });
           if (wallet) {
             wallet.balance += walletBalance;
+            // wallet.transactions.push({
+            //   date: new Date(),
+            //   type: "credit",
+            //   value: walletBalance,
+            //   reason: reason
+            // });
+        
             await wallet.save();
             console.log("1234");
+            console.log(wallet);
           }
         }
       } else if (
@@ -362,9 +372,16 @@ exports.orderDetailsAdmin = async (req, res) => {
         if (wallet) {
           order.products.forEach((orderProduct) => {
             wallet.balance += walletBalance;
+            // wallet.transactions.push({
+            //   date: new Date(),
+            //   type: "credit",
+            //   value: walletBalance,
+            //   reason: reason
+            // });
           });
           await wallet.save();
           console.log("12345");
+          console.log(wallet);
         }
       }
 
@@ -451,117 +468,26 @@ exports.salesSummary = async (req, res) => {
 };
 
 exports.salesReport = async (req, res) => {
-  console.log(req.body.selector, "report body ");
-  const selector = req.body.selector;
+  var startingDate = req.body.startingDate;
+  var endingDate = req.body.endingDate;
 
-  // Extracting the relevant parts based on the selector
-  let year, month, weekStart, weekEnd, day;
-  if (selector.startsWith("year")) {
-    year = parseInt(selector.slice(5));
-  } else if (selector.startsWith("month")) {
-    const parts = selector.split("-");
-    year = parseInt(parts[1]);
-    month = parseInt(parts[2]);
-  } else if (selector.startsWith("week")) {
-    const today = new Date();
-    weekStart = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate() - today.getDay()
-    );
-    weekEnd = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate() - today.getDay() + 6
-    );
-    console.log(weekStart, "weekstart");
-    console.log(weekEnd, "weekEnd");
-  } else if (selector.startsWith("day")) {
-    day = new Date(selector.slice(4));
-    day.setHours(0, 0, 0, 0);
-  }
+  let orders = await Order.find()
+    .populate({
+      path: "userId",
+      model: "User",
+      select: "name email",
+    })
+    .populate({
+      path: "products.item",
+      model: "Product",
+    })
+    .exec();
 
-  if (weekStart && weekEnd) {
-    const orderThisWeek = await Order.find({
-      createdAt: { $gte: weekStart, $lte: weekEnd },
-    })
-      .populate({
-        path: "userId",
-        model: "User",
-        select: "name email", // select the fields you want to include from the User document
-      })
-      .populate({
-        path: "products.item",
-        model: "Product",
-      })
-      .exec();
-    req.session.AdminloggedIn.orderThisWeek = orderThisWeek;
-    console.log(orderThisWeek, "details of this week");
-    return res.redirect("/admin/sales-report");
-  }
+  // Filter the orders based on the starting and ending dates
+  var filteredOrders = orders.filter(function(order) {
+    var orderDate = new Date(order.createdAt).toISOString().split("T")[0];
+    return orderDate >= startingDate && orderDate <= endingDate;
+  });
 
-  if (year && month) {
-    const startOfMonth = new Date(year, month - 1, 1);
-    const endOfMonth = new Date(year, month, 0, 23, 59, 59, 999);
-    const orderThisMonth = await Order.find({
-      createdAt: { $gte: startOfMonth, $lte: endOfMonth },
-    })
-      .populate({
-        path: "userId",
-        model: "User",
-        select: "name email", // select the fields you want to include from the User document
-      })
-      .populate({
-        path: "products.item",
-        model: "Product",
-      })
-      .exec();
-    req.session.AdminloggedIn.orderThisMonth = orderThisMonth;
-    console.log(orderThisMonth, "details of this month");
-    return res.redirect("/admin/sales-report");
-  }
-
-  if (day) {
-    const startOfDay = new Date(day);
-    const endOfDay = new Date(day);
-    endOfDay.setDate(endOfDay.getDate() + 1);
-    endOfDay.setSeconds(endOfDay.getSeconds() - 1);
-    const orderThisDay = await Order.find({
-      createdAt: { $gte: startOfDay, $lte: endOfDay },
-    })
-      .populate({
-        path: "userId",
-        model: "User",
-        select: "name email", // select the fields you want to include from the User document
-      })
-      .populate({
-        path: "products.item",
-        model: "Product",
-      })
-      .exec();
-    req.session.AdminloggedIn.orderThisDay = orderThisDay;
-    console.log(orderThisDay, "details of this day");
-    return res.redirect("/admin/sales-report");
-  }
-  if (year) {
-    const orderThisYear = await Order.find({
-      createdAt: {
-        $gte: new Date(year, 0, 1),
-        $lte: new Date(year, 11, 31, 23, 59, 59, 999),
-      },
-    })
-      .populate({
-        path: "userId",
-        model: "User",
-        select: "name email", // select the fields you want to include from the User document
-      })
-      .populate({
-        path: "products.item",
-        model: "Product",
-      })
-      .exec();
-    req.session.AdminloggedIn.orderThisYear = orderThisYear;
-    console.log(orderThisYear, "details of this year");
-    return res.redirect("/admin/sales-report");
-  }
+  res.send(filteredOrders);
 };

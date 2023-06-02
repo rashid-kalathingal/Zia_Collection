@@ -9,22 +9,8 @@ const wishlistController = require("../controllers/wishlistController");
 const mongoose = require("mongoose");
 const User = require("../models/userSchema");
 const couponControllers = require("../controllers/couponControllers");
+const {userauth,verify} = require('../middleware/user')
 
-//middleware for preventing loading for strangers
-function userauth(req, res, next) {
-  if (req.session && req.session.user && req.session.userloggedIn) {
-    res.redirect("/home");
-  } else {
-    next();
-  }
-}
-function verify(req, res, next) {
-  if (req.session && req.session.user && req.session.userloggedIn) {
-    next();
-  } else {
-    res.redirect("/login");
-  }
-}
 
 /* GET users listing. */
 router.get("/home", verify, cartController.cartCount, userController.home);
@@ -41,6 +27,7 @@ router.get("/forgrtPassword", userauth, userController.forgetPassword);
 router.get("/OTP", userauth, userController.OTP);
 router.get("/logout", userController.logout);
 router.get("/oneproduct/:id",cartController.cartCount,userController.oneproduct);
+router.get("/categoryview/:id",userController.categoryview)
 router.get("/Men", cartController.cartCount, userController.Men);
 router.get("/Women", cartController.cartCount, userController.Women);
 router.post("/signup", userController.postSignup);

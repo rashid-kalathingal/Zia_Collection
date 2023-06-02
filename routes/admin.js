@@ -7,23 +7,8 @@ const Product = require("../models/productSchema");
 const couponControllers = require("../controllers/couponControllers");
 const bannerController = require("../controllers/bannerController");
 const offerController = require("../controllers/offerController");
+const {adminauth,verify} = require('../middleware/admin')
 
-//middleware for preventing loading for strangers
-function adminauth(req, res, next) {
-  if (req.session && req.session.Admin && req.session.AdminloggedIn) {
-    res.redirect("/admin");
-  } else {
-    next();
-  }
-}
-
-function verify(req, res, next) {
-  if (req.session && req.session.Admin && req.session.AdminloggedIn) {
-    next();
-  } else {
-    res.redirect("/admin");
-  }
-}
 
 /* GET home page. */
 router.get("/", adminauth, function (req, res, next) {
@@ -77,7 +62,7 @@ router.post("/banner", bannerController.addBanner);
 
 
 router.get("/sales-report", adminController.salesSummary);
-router.post("/sales-report", adminController.salesReport);
+router.post("/filterOrders", adminController.salesReport);
 
 //offer
 router.get("/offer", verify, offerController.offer);

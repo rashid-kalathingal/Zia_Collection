@@ -15,13 +15,13 @@ var instance = new Razorpay({
 //create or add address
 exports.deliveryAddressPost = async (req, res) => {
   let orders = req.body;
-  console.log(orders,"xxxxxxxxxxxx");
+  console.log(orders, "xxxxxxxxxxxx");
   let cod = req.body["payment-method"];
   console.log(cod);
   // const couponAmount = req.body.couponAmount;
   // console.log( couponAmount,"gggggggggggggggggggggggggggggggg");
-  let myCoupon=req.body.couponAmount
-  console.log(myCoupon,"xxxxxxxxxxxxxzzzzzzzzzzz");
+  let myCoupon = req.body.couponAmount;
+  console.log(myCoupon, "xxxxxxxxxxxxxzzzzzzzzzzz");
   myCoupon = myCoupon.replace("₹", "");
   let addressId = new mongoose.Types.ObjectId(req.body.address);
 
@@ -39,8 +39,9 @@ exports.deliveryAddressPost = async (req, res) => {
     console.log(filteredAddress.firstname);
 
     let cart = await Cart.findOne({ userId: req.session.user._id });
-    let userId = req.session.user._id;
-    console.log(cart, userId);
+    console.log(cart, "/////////////////////////////");
+    console.log("vannu");
+    var userId = req.session.user._id;
 
     let total = await Cart.aggregate([
       {
@@ -82,7 +83,7 @@ exports.deliveryAddressPost = async (req, res) => {
     // Store the total value in a session variable
     // req.session.total = total[0].total;
 
-     console.log(total[0], "cart got");
+    console.log(total[0], "cart got");
     let status = req.body["payment-method"] === "COD" ? "placed" : "pending";
 
     let orderObj = new Order({
@@ -108,99 +109,103 @@ exports.deliveryAddressPost = async (req, res) => {
     });
     console.log(orderObj);
     let orderDoc = await Order.create(orderObj);
-    
+
     let orderId = orderDoc._id;
     let orderIdString = orderId.toString();
     console.log(orderIdString, "order string");
-
 
     let totTax = 0;
     for (const product of orderDoc.products) {
       totTax += product.tax * product.quantity;
     }
-    console.log('Total Tax:', totTax);
-    
+    console.log("Total Tax:", totTax);
+
     let totprice = 0;
     for (const product of orderDoc.products) {
-      totprice += product.currentPrice* product.quantity;
+      totprice += product.currentPrice * product.quantity;
     }
-    console.log('Total amount:', totprice);
-    
-
-
-
+    console.log("Total amount:", totprice);
 
     // Find and delete the cart items for the user
     await Cart.findOneAndDelete({ userId: cart.userId });
-    let walletItems = await Wallet.findOne({ userId });
-    let balance = walletItems.balance;
-    if (req.body["payment-method"] == "COD") {
-      res.json({ codSuccess: true });
 
-    } else if (req.body["payment-method"] == "RazorPay") {
+    let walletItems = await Wallet.findOne({ userId: req.session.user._id });
+    let balance;
 
-    if(myCoupon){
-      var options = {
-        amount: ((totprice + totTax)-myCoupon) * 100, // amount in the smallest currency unit
-        currency: "INR",
-        receipt: orderIdString,
-      };
-    }else{
-      var options = {
-        amount: (totprice + totTax) * 100, // amount in the smallest currency unit
-        currency: "INR",
-        receipt: orderIdString,
-      };
+    if (walletItems) {
+      balance = walletItems.balance;
+    } else {
+      const newWallet = new Wallet({
+        userId: req.session.user._id,
+        balance: 0, // Set the initial balance to 0 or any other desired value
+      });
+      const savedWallet = await newWallet.save();
+      balance = savedWallet.balance;
     }
 
-    
+    // Use the balance in further processing
+    console.log(balance);
+
+    if (req.body["payment-method"] == "COD") {
+      res.json({ codSuccess: true });
+    } else if (req.body["payment-method"] == "RazorPay") {
+      if (myCoupon) {
+        var options = {
+          amount: (totprice + totTax - myCoupon) * 100, // amount in the smallest currency unit
+          currency: "INR",
+          receipt: orderIdString,
+        };
+      } else {
+        var options = {
+          amount: (totprice + totTax) * 100, // amount in the smallest currency unit
+          currency: "INR",
+          receipt: orderIdString,
+        };
+      }
 
       instance.orders.create(options, function (err, order) {
         console.log(order, "new order");
         res.json(order);
       });
-
     } else if (req.body["payment-method"] == "Wallet") {
       console.log(orderDoc._id, "iddd of order");
-    console.log(balance,"ooooooooooooooooo");
-    
-        // const total= total[0].total
-        console.log( total[0].total,"iiiiiiiiiiiiiiii");
-    if (total[0].total <= balance) {
-      console.log(("first case"));
-      // Check if wallet balance is sufficient for the purchase
-      // Deduct the purchase amount from the wallet balance
-      balance -= total[0].total;
-      walletItems.balance = balance;
-      await walletItems.save();
-      console.log("dat base done")
+      console.log(balance, "ooooooooooooooooo");
 
-      // Create the order with the updated price
-      // const order = new Order({
-      //   userId,
-      //   total: total[0].total,
-      // });
-      // await order.save();
+      // const total= total[0].total
+      console.log(total[0].total, "iiiiiiiiiiiiiiii");
+      if (total[0].total <= balance) {
+        console.log("first case");
+        // Check if wallet balance is sufficient for the purchase
+        // Deduct the purchase amount from the wallet balance
+        balance -= total[0].total;
+        walletItems.balance = balance;
+        await walletItems.save();
+        console.log("dat base done");
 
-      console.log("Order placed using wallet payment");
-      res.json({ codSuccess: true });
-    } else if (total[0].total > balance) {
-      
-       console.log("Insufficient funds in wallet");
-       res.json({emptyWallet:true})
-      // return res.render("user/wallet", {
-      //   user: req.session.user,
-      //   cartCount: req.cartCount,
-      //   balance,
-      //   insufficientFunds: true,
-      // });
-    }
+        // Create the order with the updated price
+        // const order = new Order({
+        //   userId,
+        //   total: total[0].total,
+        // });
+        // await order.save();
+
+        console.log("Order placed using wallet payment");
+        res.json({ codSuccess: true });
+      } else if (total[0].total > balance) {
+        console.log("Insufficient funds in wallet");
+        res.json({ emptyWallet: true });
+        // return res.render("user/wallet", {
+        //   user: req.session.user,
+        //   cartCount: req.cartCount,
+        //   balance,
+        //   insufficientFunds: true,
+        // });
+      }
       // instance.orders.create(options, function (err, order) {
       //   console.log(order, "new order");
       //   res.json(order);
       // });
-    }
-    else if (req.body["payment-method"] == "PayPal") {
+    } else if (req.body["payment-method"] == "PayPal") {
       let amount = Math.floor(orderDoc.totalAmount / 75);
       console.log(amount, "///////");
       amount = new String(amount);
@@ -315,68 +320,64 @@ exports.deliveryAddress = async (req, res) => {
     ]);
     // console.log(cartItems, "cartItemssss");
 
-     let total = await Cart.aggregate([
-        {
-          $match: { userId },
+    let total = await Cart.aggregate([
+      {
+        $match: { userId },
+      },
+      {
+        $unwind: "$products",
+      },
+      {
+        $project: {
+          item: { $toObjectId: "$products.item" },
+          quantity: "$products.quantity",
+          size: "$products.size",
+          currentPrice: "$products.currentPrice",
+          tax: "$products.tax",
         },
-        {
-          $unwind: "$products",
+      },
+      {
+        $lookup: {
+          from: "products",
+          localField: "item",
+          foreignField: "_id",
+          as: "productInfo",
         },
-        {
-          $project: {
-            item: { $toObjectId: "$products.item" },
-            quantity: "$products.quantity",
-            size: "$products.size",
-            currentPrice: "$products.currentPrice",
-            tax: "$products.tax",
-          },
+      },
+      {
+        $project: {
+          item: 1,
+          quantity: 1,
+          size: 1,
+          currentPrice: 1,
+          tax: 1,
+          productInfo: { $arrayElemAt: ["$productInfo", 0] },
         },
-        {
-          $lookup: {
-            from: "products",
-            localField: "item",
-            foreignField: "_id",
-            as: "productInfo",
-          },
-        },
-        {
-          $project: {
-            item: 1,
-            quantity: 1,
-            size: 1,
-            currentPrice: 1,
-            tax: 1,
-            productInfo: { $arrayElemAt: ["$productInfo", 0] },
-          },
-        },
-        {
-          $group: {
-            _id: null,
-            totalTax: { $sum: { $multiply: ["$quantity", "$tax"] } },
-            total: { $sum: { $multiply: ["$quantity", "$currentPrice"] } },
-            totalWithTax: {
-              $sum: {
-                $multiply: ["$quantity", { $add: ["$tax", "$currentPrice"] }],
-              },
+      },
+      {
+        $group: {
+          _id: null,
+          totalTax: { $sum: { $multiply: ["$quantity", "$tax"] } },
+          total: { $sum: { $multiply: ["$quantity", "$currentPrice"] } },
+          totalWithTax: {
+            $sum: {
+              $multiply: ["$quantity", { $add: ["$tax", "$currentPrice"] }],
             },
-            // total: { $sum: { $multiply: ["$quantity", "$productInfo.price"] } },
           },
+          // total: { $sum: { $multiply: ["$quantity", "$productInfo.price"] } },
         },
-      ]);
+      },
+    ]);
 
-      //  console.log(total,"loooooooooooooooooo")
-
-      //  console.log(cartItems,'cart')
-      //  console.log(total,'dispak')
-      let subtotal = 0;
-      let tax = 0;
-      let totalWithTax = 0;
-      if (total.length > 0) {
-        subtotal = total[0].total;
-        tax = total[0].totalTax;
-        totalWithTax = total[0].totalWithTax;
-      }
-console.log(total,"hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
+    let subtotal = 0;
+    let tax = 0;
+    let totalWithTax = 0;
+    if (total.length > 0) {
+      subtotal = total[0].total;
+      tax = total[0].totalTax;
+      totalWithTax = total[0].totalWithTax;
+    }
+    
     // Store the total value in a session variable
     // req.session.total = total[0].total;
 
@@ -391,22 +392,6 @@ console.log(total,"hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
     console.log(error);
   }
 };
-
-// exports.savedAddressget = async (req,res)=>{
-//   let user = req.session.user
-//   console.log(user,'user here')
-//    // Access cartCount value from req object
-//    const cartCount = req.cartCount;
-//    const addressData  = await Address.find()
-//    const address = addressData[0].address;
-
-//    console.log(address,"address got")
-//   try {
-//     res.render('user/savedAddress',{video:true,user,cartCount,address})
-//   } catch (error) {
-//     console.log(error)
-//   }
-// }
 
 exports.savedAddressPost = async (req, res) => {
   let user = req.session.user._id;

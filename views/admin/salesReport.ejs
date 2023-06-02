@@ -19,19 +19,19 @@ include('../admin/partials/header.ejs') -%>
       #datatables-reponsive td {
         padding: 12px;
         text-align: left;
-        border: 1px solid #ddd;
+        border: 1px solid #372424;
       }
 
       #datatables-reponsive th {
-        background-color: #f2f2f2;
+        background-color: #372424;
       }
 
       #datatables-reponsive tr:nth-child(even) {
-        background-color: #f9f9f9;
+        background-color: #372424;
       }
 
       #datatables-reponsive tr:hover {
-        background-color: #ddd;
+        background-color: #372424;
       }
 
       @media only screen and (max-width: 768px) {
@@ -79,8 +79,12 @@ include('../admin/partials/header.ejs') -%>
         border-color: #212529;
       }
     </style>
+
+
+
+
 <div style="padding-left: 30px; padding-right: 30px;">
-    <main class="container">
+   
       <div class="container-fluid p-0">
         <div class="row">
           <div class="col-md-12 d-flex justify-content-end">
@@ -102,6 +106,9 @@ include('../admin/partials/header.ejs') -%>
               </button>
             </div>
           </div>
+
+
+      
 
           <!-- <div class="col-md-12 d-flex justify-content-start">
 
@@ -149,6 +156,25 @@ include('../admin/partials/header.ejs') -%>
                   </form>
 
             </div> -->
+            <div>
+              <div class="mb-3">
+                <label for="startingDate" class="form-label">Starting Date</label>
+                <input type="date" id="startingDate" class="form-control" required />
+              </div>
+            
+              <div class="mb-3">
+                <label for="endingDate" class="form-label">Ending Date</label>
+                <input type="date" id="endingDate" class="form-control" required />
+              </div>
+              
+              <button id="showOrdersBtn" class="btn btn-primary">Show Orders</button>
+            </div>
+            
+            <div id="ordersContainer"></div>
+            
+          
+            
+
 
           <div class="col-12 mt-3">
             <div class="card">
@@ -175,7 +201,7 @@ include('../admin/partials/header.ejs') -%>
                     <% locals.orders.forEach(element=> { %> <%
                     element.products.forEach(prd=> { %>
                     <tr>
-                      <!-- <td><%#= element._id %></td> -->
+                     
 
                       <td>
                         <%= new Date(element.createdAt).toLocaleString('en-US',
@@ -199,7 +225,7 @@ include('../admin/partials/header.ejs') -%>
           </div>
         </div>
       </div>
-    </main>
+    
 </div>
     <script>
       $(document).ready(function () {
@@ -207,35 +233,104 @@ include('../admin/partials/header.ejs') -%>
       });
     </script>
 
-    <script>
-      document
-        .getElementById("my-dropdown")
-        .addEventListener("change", function () {
-          var selectedValue = this.value;
-          if (selectedValue.startsWith("year")) {
-            document.getElementById("yearDiv").style.display = "block";
-            document.getElementById("monthDiv").style.display = "none";
-            document.getElementById("dayDiv").style.display = "none";
-          } else if (selectedValue.startsWith("month")) {
-            document.getElementById("yearDiv").style.display = "block";
-            document.getElementById("monthDiv").style.display = "block";
-            document.getElementById("dayDiv").style.display = "none";
-          } else if (selectedValue.startsWith("day")) {
-            document.getElementById("yearDiv").style.display = "block";
-            document.getElementById("monthDiv").style.display = "block";
-            document.getElementById("dayDiv").style.display = "block";
-          } else {
-            document.getElementById("yearDiv").style.display = "none";
-            document.getElementById("monthDiv").style.display = "none";
-            document.getElementById("dayDiv").style.display = "none";
-          }
-        });
-    </script>
+    // <script>
+    //   document
+    //     .getElementById("my-dropdown")
+    //     .addEventListener("change", function () {
+    //       var selectedValue = this.value;
+    //       if (selectedValue.startsWith("year")) {
+    //         document.getElementById("yearDiv").style.display = "block";
+    //         document.getElementById("monthDiv").style.display = "none";
+    //         document.getElementById("dayDiv").style.display = "none";
+    //       } else if (selectedValue.startsWith("month")) {
+    //         document.getElementById("yearDiv").style.display = "block";
+    //         document.getElementById("monthDiv").style.display = "block";
+    //         document.getElementById("dayDiv").style.display = "none";
+    //       } else if (selectedValue.startsWith("day")) {
+    //         document.getElementById("yearDiv").style.display = "block";
+    //         document.getElementById("monthDiv").style.display = "block";
+    //         document.getElementById("dayDiv").style.display = "block";
+    //       } else {
+    //         document.getElementById("yearDiv").style.display = "none";
+    //         document.getElementById("monthDiv").style.display = "none";
+    //         document.getElementById("dayDiv").style.display = "none";
+    //       }
+    //     });
+    // </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.6/jspdf.plugin.autotable.min.js"></script>
     <script type="text/javascript" src="/javascripts/tableToExcel.js"></script>
     <script src="https://unpkg.com/html-to-text@8.0.0/html-to-text.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $("#showOrdersBtn").on("click", function() {
+      var startingDate = $("#startingDate").val();
+      var endingDate = $("#endingDate").val();
+
+      $.ajax({
+        type: "POST",
+        url: "/admin/filterOrders",
+        data: { startingDate: startingDate, endingDate: endingDate },
+        success: function(filteredOrders) {
+          displayFilteredOrders(filteredOrders);
+        },
+        error: function(xhr, status, error) {
+          console.error(error);
+        }
+      });
+    });
+  });
+
+  function displayFilteredOrders(orders) {
+    var ordersContainer = $("#ordersContainer");
+    var tableHtml = `
+      <table class="table table-striped" style="width: 100%">
+        <thead>
+          <tr>
+            <th>Date of Order</th>
+            <th>Quantity</th>
+            <th>Amount</th>
+            <th>Tax</th>
+            <th>Mode of Payment</th>
+            <th>Payment Status</th>
+            <th>Order Status</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    orders.forEach(function(order) {
+      order.products.forEach(function(prd) {
+        var date = new Date(order.createdAt).toLocaleString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric',
+          hour12: true
+        });
+        var quantity = prd.quantity;
+        var amount = (prd.currentPrice + prd.tax) * prd.quantity;
+        var tax = prd.tax * prd.quantity;
+
+        tableHtml += `
+          <tr>
+            <td>${date}</td>
+            <td>${quantity}</td>
+            <td>&#8377; ${amount}</td>
+            <td>&#8377; ${tax}</td>
+            <td>${order.paymentMethod}</td>
+            <td>${order.paymentstatus}</td>
+            <td>${prd.orderstatus}</td>
+          </tr>
+        `;
+      });
+    });
+
+    tableHtml += "</tbody></table>";
+    ordersContainer.html(tableHtml);
+  }
+</script>
 
     <script>
       function salesReportPdf() {

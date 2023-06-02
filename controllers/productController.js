@@ -50,7 +50,7 @@ exports.postProduct = (req, res, next) => {
 exports.AllProducts = async (req, res) => {
   try {
     const products = await Product.find({});
-    res.render("admin/Product", { admin: true, products, noShow: true });
+    res.render("admin/product", { admin: true, products, noShow: true });
   } catch (error) {
     console.log(error);
   }
@@ -76,8 +76,6 @@ exports.getEditProductPage = async (req, res) => {
 exports.editProduct = async (req, res) => {
   upload.array("image", 4)(req, res, async (err) => {
     try {
-      const items = await Product.updateOne({ _id: req.params.id });
-
       const updatedData = {
         name: req.body.name,
         category: req.body.category,
@@ -87,12 +85,10 @@ exports.editProduct = async (req, res) => {
 
       if (req.files && req.files.length > 0) {
         updatedData.images = req.files.map((file) => file.filename);
-      } else {
-        updatedData.images = items.images;
       }
 
-      const updatedProducts = await Product.updateOne(
-        { _id: req.params.id },
+      const updatedProduct = await Product.findByIdAndUpdate(
+        req.params.id,
         updatedData
       );
 
@@ -103,6 +99,7 @@ exports.editProduct = async (req, res) => {
     }
   });
 };
+
 //
 exports.deleteProduct = async (req, res) => {
   console.log(req.params.id, "///////////");

@@ -202,6 +202,28 @@ exports.oneproduct = async (req, res) => {
   }
 };
 
+
+
+exports.categoryview = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const singleCategory = await Category.findById(id);
+    
+    
+
+    const products = await Product.find({ category: singleCategory.id });
+console.log(products);
+    res.render('user/singleCategory', {
+      singleCategory,
+      products
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+
 //render blog page
 exports.blog = function (req, res, next) {
   loggedin = req.session.userloggedIn;
@@ -376,7 +398,7 @@ exports.getSignOtpIn = (req, res, next) => {
   });
   req.session.errmsg = null;
 };
-//////////////////////
+
 exports.verifyMobileOtp = async (req, res, next) => {
   try {
     if (parseInt(req.body.userOtp) === req.session.otP) {
